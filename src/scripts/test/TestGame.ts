@@ -124,7 +124,7 @@ export class TestGame extends XState {
 		
 		var __testButton3:XTextSpriteButton = this.addGameObjectAsChild (XTextSpriteButton, 0, 0.0, false) as XTextSpriteButton;
 		__testButton3.afterSetup ([
-			"TestButtonToo",
+			"StandardButton",
 			true, 10, 300, 100,
 			"press me",
 			"Aller",

@@ -22,7 +22,32 @@ export class XSpriteButton extends XButton {
     public m_down9:PIXI.NineSlicePlane;
     public m_selected9:PIXI.NineSlicePlane;
     public m_disabled9:PIXI.NineSlicePlane;
-    
+
+//------------------------------------------------------------------------------------------
+    public cleanup ():void {
+        super.cleanup ();
+        
+        if (this.m_normal9 != null) {
+            this.m_normal9.destroy ();
+        }
+
+        if (this.m_over9 != null) {
+            this.m_over9.destroy ();
+        }
+
+        if (this.m_down9 != null) {
+            this.m_down9.destroy ();
+        }
+
+        if (this.m_selected9 != null) {
+            this.m_selected9.destroy ();
+        }
+
+        if (this.m_disabled9 != null) {
+            this.m_disabled9.destroy ();
+        }
+    }
+
 //------------------------------------------------------------------------------------------
 	public getParams (__params:Array<any> = null):void {
         this.m_buttonClassName = __params[0];
