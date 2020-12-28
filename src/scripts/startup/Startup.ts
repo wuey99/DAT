@@ -80,6 +80,17 @@ export class Startup extends XState {
 				XTask.RETN,
 			]);
 
+			this.createBitmapFont (
+				"Aller",
+				{
+					fontFamily: "Nunito",
+					fontSize: 60,
+					strokeThickness: 0,
+					fill: "0xffffff",         
+				},
+				{chars: this.getBitmapFontChars ()}
+			);
+			
 		var __testButton3:XTextSpriteButton = this.addGameObjectAsChild (XTextSpriteButton, 0, 0.0, false) as XTextSpriteButton;
 		__testButton3.afterSetup ([
 			"StandardButton",

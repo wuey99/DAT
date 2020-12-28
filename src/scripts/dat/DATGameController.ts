@@ -13,7 +13,7 @@ import { XWorld} from '../../engine/sprite/XWorld';
 import { XType } from '../../engine/type/XType';
 import { XGameObject} from '../../engine/gameobject/XGameObject';
 import { XGameController } from '../../engine/state/XGameController';
-import { Startup } from './Startup';
+import { Startup } from '../startup/Startup';
 import { XSimpleXMLNode } from '../../engine/xml/XSimpleXMLNode';
 
 //------------------------------------------------------------------------------------------
