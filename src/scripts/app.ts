@@ -12,7 +12,7 @@ import { XWorld } from '../engine/sprite/XWorld';
 import { XGameController } from '../engine/state/XGameController';
 import { FpsMeter } from './fps-meter';
 import { TestGameController } from './test/TestGameController';
-import { DATGameController } from './dat/DATGameController';
+import { DATGameController } from './game/DATGameController';
 import { XSignal } from '../engine/signals/XSignal';
 
 //------------------------------------------------------------------------------------------

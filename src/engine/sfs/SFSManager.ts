@@ -10,10 +10,6 @@ export class SFSManager {
     public m_sfs:SFS2X.SmartFox;
     public m_connected:boolean;
 
-    public m_connectedSignal:XSignal;
-    public m_disconnectedSignal:XSignal;
-    public m_errorSignal:XSignal;
-
     public m_sfsEvents:Map<any, __SFSListener>;
     
 //------------------------------------------------------------------------------------------
@@ -31,10 +27,6 @@ export class SFSManager {
 	
 //------------------------------------------------------------------------------------------
 	public setup ():SFSManager {
-        this.m_connectedSignal = new XSignal ();
-        this.m_disconnectedSignal = new XSignal ();
-        this.m_errorSignal = new XSignal ();
-
         this.m_sfsEvents = new Map<any, __SFSListener> ();
 
         this.m_sfs = new SFS2X.SmartFox ();
@@ -79,10 +71,6 @@ export class SFSManager {
 //------------------------------------------------------------------------------------------
 	public cleanup ():void {
         this.removeAllEventListeners ();
-    
-		this.m_connectedSignal.removeAllListeners ();
-        this.m_disconnectedSignal.removeAllListeners ();
-        this.m_errorSignal.removeAllListeners ();
 	}
     
 //------------------------------------------------------------------------------------------
@@ -141,35 +129,16 @@ export class SFSManager {
     }
 
 //------------------------------------------------------------------------------------------
-    public addConnectedistener (__listener:any):number {
-        return this.m_connectedSignal.addListener (__listener);
-    }
-
-//------------------------------------------------------------------------------------------
-    public addDisconnectedistener (__listener:any):number {
-        return this.m_disconnectedSignal.addListener (__listener);
-    }
-
-//------------------------------------------------------------------------------------------
-    public addErrorListener (__listener:any):number {
-        return this.m_errorSignal.addListener (__listener);
-    }
-
-//------------------------------------------------------------------------------------------
     public onConnection (evt:SFS2X.SFSEvent):void {
         if (evt.success) {
             console.log ("Connected to SmartFoxServer 2X!");
 
             this.m_connected = true;
 
-            this.m_connectedSignal.fireSignal ();
-
         } else {
             console.log ("Connection failed. Is the server running at all?");
 
             this.m_connected = false;
-
-            this.m_errorSignal.fireSignal ();
         }
     }
 
@@ -178,8 +147,6 @@ export class SFSManager {
         console.log ("Connection was lost. Reason: ", evt.params)
 
         this.m_connected = false;
-
-        this.m_disconnectedSignal.fireSignal ();
     }
 
 //------------------------------------------------------------------------------------------

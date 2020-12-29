@@ -10,14 +10,22 @@ import { XTask } from '../../engine/task/XTask';
 import { XTaskManager} from '../../engine/task/XTaskManager';
 import { XTaskSubManager} from '../../engine/task/XTaskSubManager';
 import { XWorld} from '../../engine/sprite/XWorld';
-import { XType } from '../../engine/type/XType';
 import { XGameObject} from '../../engine/gameobject/XGameObject';
-import { XGameController } from '../../engine/state/XGameController';
-import { Startup } from '../startup/Startup';
+import { XState } from '../../engine/state/XState';
+import { GUID } from '../../engine/utils/GUID';
 import { XSimpleXMLNode } from '../../engine/xml/XSimpleXMLNode';
+import * as SFS2X from "sfs2x-api";
+import { SFSManager } from '../../engine/sfs/SFSManager';
+import { XSpriteButton } from '../../engine/ui/XSpriteButton';
+import { XTextButton } from '../../engine/ui/XTextButton';
+import { XTextSpriteButton } from '../../engine/ui/XTextSpriteButton';
+import { XTextSprite } from '../../engine/sprite/XTextSprite';
+import { TextInput } from 'pixi-textinput-v5';
+import { ConnectionManager } from '../sfs/ConnectionManager';
+import { XType } from '../../engine/type/XType';
 
 //------------------------------------------------------------------------------------------
-export class DATGameController extends XGameController {
+export class Startup extends XState {
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -33,44 +41,49 @@ export class DATGameController extends XGameController {
 	
 //------------------------------------------------------------------------------------------
 	public afterSetup (__params:Array<any> = null):XGameObject {
-		super.afterSetup (__params);
+        super.afterSetup (__params);
 
-		this.getGameInstance ().registerState ("Startup", Startup);
+		console.log (": guid: ", GUID.create ());
 
-		this.m_XApp.getXProjectManager ().pauseAllResourceManagers ();
+        var __gameObject:XGameObject = this.world.addGameObject (ConnectionManager, 0, 0.0) as ConnectionManager;
+		__gameObject.afterSetup ([]);
 
-		this.addTask ([
-				XTask.WAIT, 0x0100,
-
-				() => {
-					this.m_XApp.getXProjectManager ().startResourceManagersByName (["default", "Common"]);
+		this.createBitmapFont (
+				"Aller",
+				{
+					fontFamily: "Nunito",
+					fontSize: 60,
+					strokeThickness: 0,
+					fill: "0xffffff",         
 				},
-
-				XTask.LABEL, "loopAssets",
-					XTask.WAIT, 0x0100,
-
-					XTask.FLAGS, (__task:XTask) => {
-						__task.ifTrue (
-							this.m_XApp.getXProjectManager ().getLoadCompleteByGroups (["Common"])
-						);
-					}, XTask.BNE, "loopAssets",
-
-				() => { 
-					this.m_XApp.getXProjectManager ().startAllResourceManagers ();
-
-					this.getGameInstance ().gotoState ("Startup");
-				},
-
-			XTask.RETN,
+				{chars: this.getBitmapFontChars ()}
+		);
+			
+		var __testButton3:XTextSpriteButton = this.addGameObjectAsChild (XTextSpriteButton, 0, 0.0, false) as XTextSpriteButton;
+		__testButton3.afterSetup ([
+			"StandardButton",
+			true, 10, 300, 100,
+			"press me",
+			"Aller",
+			50,
+			0x0000ff,
+			0xff0000,
+			0x00ff00,
+			0x0000ff,
+			0x0000ff,
+			false,
+			"center", "center"
 		]);
-
+		__testButton3.x = 1924;
+		__testButton3.y = 512;
+	
 		return this;
 	}
-	
+
 //------------------------------------------------------------------------------------------
 	public cleanup ():void {
         super.cleanup ();
-    }
-    
+	}
+	
 //------------------------------------------------------------------------------------------
 }
