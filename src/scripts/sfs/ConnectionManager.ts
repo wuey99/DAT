@@ -17,6 +17,8 @@ import { XGameObject} from '../../engine/gameobject/XGameObject';
 
 //------------------------------------------------------------------------------------------
 export class ConnectionManager extends XGameObject {
+    public static self:ConnectionManager;
+
     public script:XTask;
 
     public m_connected:boolean;
@@ -24,12 +26,20 @@ export class ConnectionManager extends XGameObject {
 	
 	public m_connectedSignal:XSignal;
     public m_disconnectedSignal:XSignal;
-	public m_loggedInToZone:XSignal;
-	public m_loggedOutOfZone:XSignal;
-	
+	public m_loggedInToZoneSignal:XSignal;
+    public m_loggedOutOfZoneSignal:XSignal;
+    public m_errorSignal:XSignal;
+    
+//------------------------------------------------------------------------------------------
+    public static instance ():ConnectionManager {
+        return ConnectionManager.self;
+    }
+
 //------------------------------------------------------------------------------------------	
 	constructor () {
-		super ();
+        super ();
+        
+        ConnectionManager.self = this;
 	}
 	
 //------------------------------------------------------------------------------------------
@@ -43,18 +53,17 @@ export class ConnectionManager extends XGameObject {
 	public afterSetup (__params:Array<any> = null):XGameObject {
         super.afterSetup (__params);
 
-		this.m_connectedSignal = new XSignal ();
-		this.m_disconnectedSignal = new XSignal ();
-		this.m_loggedInToZone = new XSignal ();
-		this.m_loggedOutOfZone = new XSignal ();
+		this.m_connectedSignal = this.createXSignal ();
+		this.m_disconnectedSignal = this.createXSignal ();
+		this.m_loggedInToZoneSignal = this.createXSignal ();
+        this.m_loggedOutOfZoneSignal = this.createXSignal ();
+        this.m_errorSignal = this.createXSignal ();
 
         this.script = this.addEmptyTask ();
 
         this.m_connected = false;
         this.m_loggedinToZone = false;
 
-        console.log (": xyzzy: ");
-        
         this.Connect_Script ();
 
 		return this;
@@ -66,8 +75,9 @@ export class ConnectionManager extends XGameObject {
 		
 		this.m_connectedSignal.removeAllListeners ();
 		this.m_disconnectedSignal.removeAllListeners ();
-		this.m_loggedInToZone.removeAllListeners ();
-        this.m_loggedOutOfZone.removeAllListeners ();
+		this.m_loggedInToZoneSignal.removeAllListeners ();
+        this.m_loggedOutOfZoneSignal.removeAllListeners ();
+        this.m_errorSignal.removeAllListeners ();
 	}
 
 	//------------------------------------------------------------------------------------------
@@ -82,12 +92,12 @@ export class ConnectionManager extends XGameObject {
 
 	//------------------------------------------------------------------------------------------
 	public addLoggedIntoZoneistener (__listener:any):number {
-		return this.m_loggedInToZone.addListener (__listener);
+		return this.m_loggedInToZoneSignal.addListener (__listener);
 	}
 
 	//------------------------------------------------------------------------------------------
 	public addLoggedOutOfZoneistener (__listener:any):number {
-		return this.m_loggedOutOfZone.addListener (__listener);
+		return this.m_loggedInToZoneSignal.addListener (__listener);
 	}
 
 	//------------------------------------------------------------------------------------------
@@ -107,13 +117,22 @@ export class ConnectionManager extends XGameObject {
 							(e:SFS2X.SFSEvent) => {
 								console.log (": ----------------->: connected: ");
 				
-								this.m_connected = true;
-							},
+                                this.m_connected = true;
+                                
+                                this.m_connectedSignal.fireSignal ();
+                            },
+                            () => {
+                                console.log (": ----------------->: connection error: ");
+
+                                this.m_errorSignal.fireSignal ();
+                            },
 							(e:SFS2X.SFSEvent) => {
 								console.log (": ----------------->: disconnected: ");
 				
-								this.m_connected = false;
-							}
+                                this.m_connected = false;
+                                
+                                this.m_disconnectedSignal.fireSignal ();
+                            }
 						);
 					},
 
@@ -167,18 +186,27 @@ export class ConnectionManager extends XGameObject {
                             console.log (": connected: ");
         
                             SFSManager.instance ().send (new SFS2X.LoginRequest("FozzieTheBear", "", null, "BasicExamples"));
+
                             SFSManager.instance ().once (SFS2X.SFSEvent.LOGIN, (e:SFS2X.SFSEvent) => {
 								console.log (": logged in: ", e);
 								
-								this.m_loggedinToZone = true;
+                                this.m_loggedinToZone = true;
+                                
+                                this.m_loggedInToZoneSignal.fireSignal ();
                             });
+
                             SFSManager.instance ().once (SFS2X.LOGIN_ERROR, (e:SFS2X.SFSEvent) => {
                                 console.log (": login error: ", e);
-							});
+
+                                this.m_errorSignal.fireSignal ();
+                            });
+                            
                             SFSManager.instance ().once (SFS2X.SFSEvent.LOGOUT, (e:SFS2X.SFSEvent) => {
 								console.log (": logged out: ", e);
 								
-								this.m_loggedinToZone = false;
+                                this.m_loggedinToZone = false;
+                                
+                                this.m_loggedOutOfZoneSignal.fireSignal ();
                             });
                         },
         

@@ -19,13 +19,18 @@ import { SFSManager } from '../../engine/sfs/SFSManager';
 import { XSpriteButton } from '../../engine/ui/XSpriteButton';
 import { XTextButton } from '../../engine/ui/XTextButton';
 import { XTextSpriteButton } from '../../engine/ui/XTextSpriteButton';
+import { XTextGameObject } from '../../engine/ui/XTextGameObject';
 import { XTextSprite } from '../../engine/sprite/XTextSprite';
 import { TextInput } from 'pixi-textinput-v5';
 import { ConnectionManager } from '../sfs/ConnectionManager';
 import { XType } from '../../engine/type/XType';
+import { G } from '../../engine/app/G';
+import { FlockLeader } from '../test/FlockLeader';
 
 //------------------------------------------------------------------------------------------
 export class Startup extends XState {
+	public m_statusMessage:XTextGameObject;
+	public m_resizeListenerID:number;
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -45,45 +50,93 @@ export class Startup extends XState {
 
 		console.log (": guid: ", GUID.create ());
 
-        var __gameObject:XGameObject = this.world.addGameObject (ConnectionManager, 0, 0.0) as ConnectionManager;
+		var __leader:FlockLeader = world.addGameObject (FlockLeader, 0, 0.0, false) as FlockLeader;
+		__leader.afterSetup ([]);
+
+        var __gameObject:ConnectionManager = this.world.addGameObject (ConnectionManager, 0, 0.0) as ConnectionManager;
 		__gameObject.afterSetup ([]);
 
 		this.createBitmapFont (
-				"Aller",
-				{
-					fontFamily: "Nunito",
-					fontSize: 60,
-					strokeThickness: 0,
-					fill: "0xffffff",         
-				},
-				{chars: this.getBitmapFontChars ()}
+			"Nunito",
+			{
+				fontFamily: "Nunito",
+				fontSize: 60,
+				strokeThickness: 0,
+				fill: "0xffffff",         
+			},
+			{chars: this.getBitmapFontChars ()}
 		);
 			
-		var __testButton3:XTextSpriteButton = this.addGameObjectAsChild (XTextSpriteButton, 0, 0.0, false) as XTextSpriteButton;
-		__testButton3.afterSetup ([
-			"StandardButton",
-			true, 10, 300, 100,
-			"press me",
-			"Aller",
-			50,
-			0x0000ff,
+		this.m_statusMessage = this.addGameObjectAsChild (XTextGameObject, 0, 0.0) as XTextGameObject;
+		this.m_statusMessage.afterSetup ([]);
+
+		this.m_statusMessage.setupText (
+			500,
+			64,
+			"hello world",
+			"Nunito",
+			100,
 			0xff0000,
-			0x00ff00,
-			0x0000ff,
-			0x0000ff,
-			false,
+			true,
 			"center", "center"
-		]);
-		__testButton3.x = 1924;
-		__testButton3.y = 512;
-	
+		);
+
+		this.horizontalPercent (this.m_statusMessage, 0.50);
+		this.verticalPercent (this.m_statusMessage, 0.50);
+
+		this.m_resizeListenerID = this.m_XApp.addWindowResizeListener (this.resize.bind (this));
+		this.resize ();
+
 		return this;
 	}
 
 //------------------------------------------------------------------------------------------
 	public cleanup ():void {
-        super.cleanup ();
+		super.cleanup ();
+		
+		this.m_XApp.removeWindowResizeListener (this.m_resizeListenerID);
 	}
 	
+//------------------------------------------------------------------------------------------
+	public resize ():void {
+		this.m_XApp.getRenderer ().resize (this.m_XApp.getWindowWidth (), this.m_XApp.getWindowHeight ());
+
+		//------------------------------------------------------------------------------------------
+		// scale the entire stage
+		//------------------------------------------------------------------------------------------		
+		this.m_XApp.getStage ().scale.x = 1.0;
+		this.m_XApp.getStage ().scale.y = 1.0;
+
+		console.log (": scaleRatio: ", G.scaleRatio);
+
+		return;
+
+		var i:number;
+
+		for (i=0; i<XWorld.MAX_LAYERS; i++) {
+			this.scaleLayer (i, 0, 0, 1.0, 1.0);
+		}
+	}
+
+//------------------------------------------------------------------------------------------
+	public scaleLayer (__layerNum:number, __x:number, __scaleX:number, __y:number, __scaleY:number):void {
+		var __layer:XSpriteLayer = this.world.getLayer (__layerNum);
+
+		__layer.x = __x;
+		__layer.y = __y;
+		__layer.scale.x = __scaleX * G.scaleRatio;
+		__layer.scale.y = __scaleY * G.scaleRatio;
+	}
+
+//------------------------------------------------------------------------------------------
+	public getActualWidth ():number {
+		return G.SCREEN_WIDTH;
+	}
+
+//------------------------------------------------------------------------------------------
+	public getActualHeight ():number {
+		return G.SCREEN_HEIGHT;
+	}
+
 //------------------------------------------------------------------------------------------
 }

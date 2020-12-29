@@ -1,0 +1,88 @@
+//------------------------------------------------------------------------------------------
+import * as PIXI from 'pixi.js-legacy'
+import { XApp } from '../app/XApp';
+import { XSprite } from '../sprite/XSprite';
+import { XSpriteLayer } from '../sprite/XSpriteLayer';
+import { XSignal } from '../signals/XSignal';
+import { XSignalManager } from '../signals/XSignalManager';
+import { world } from '../../scripts/app';
+import { XTask } from '../task/XTask';
+import { XTaskManager} from '../task/XTaskManager';
+import { XTaskSubManager} from '../task/XTaskSubManager';
+import { XWorld} from '../sprite/XWorld';
+import { XType } from '../type/XType';
+import { XGameObject} from '../gameobject/XGameObject';
+import { XTextSprite } from '../sprite/XTextSprite';
+import { G } from '../app/G';
+
+//------------------------------------------------------------------------------------------
+export class XTextGameObject extends XGameObject {
+	public m_textSprite:XTextSprite;
+
+//------------------------------------------------------------------------------------------	
+	constructor () {
+		super ();
+	}
+	
+//------------------------------------------------------------------------------------------
+	public setup (__world:XWorld, __layer:number, __depth:number):XGameObject {
+        super.setup (__world, __layer, __depth);
+
+		return this;
+	}
+	
+//------------------------------------------------------------------------------------------
+	public afterSetup (__params:Array<any> = null):XGameObject {
+        super.afterSetup (__params);
+
+		return this;
+	}
+	
+//------------------------------------------------------------------------------------------
+	public cleanup ():void {
+        super.cleanup ();
+	}
+	
+//------------------------------------------------------------------------------------------
+// setupText
+//------------------------------------------------------------------------------------------
+	public setupText (
+		__width:number=32,
+		__height:number=32,
+		__text:string="",
+		__fontName:string="Aller",
+		__fontSize:number=12,
+		__color:number=0x000000,
+		__bold:boolean=false,
+		__horzAlign:string="left",
+		__vertAlign:string="top"
+	):void {
+		this.m_textSprite = this.createXTextSprite (
+			__width,
+			__height,
+			__text,
+			__fontName,
+			__fontSize,
+			__color,
+			__bold,
+			__horzAlign,
+			__vertAlign
+		);
+
+		this.addSortableChild (this.m_textSprite, this.getLayer (), this.getDepth (), false);
+			
+		this.show ();
+	}
+
+//------------------------------------------------------------------------------------------
+	public get text ():string {
+		return this.m_textSprite.text;
+	}
+
+//------------------------------------------------------------------------------------------
+	public set text (__value:string) {
+		this.m_textSprite.text = __value;
+	}
+
+//------------------------------------------------------------------------------------------
+}

@@ -10,6 +10,8 @@ export class SFSManager {
     public m_sfs:SFS2X.SmartFox;
     public m_connected:boolean;
 
+    public m_errorSignal:XSignal;
+
     public m_sfsEvents:Map<any, __SFSListener>;
     
 //------------------------------------------------------------------------------------------
@@ -36,13 +38,15 @@ export class SFSManager {
         this.addEventListener (SFS2X.SFSEvent.CONFIG_LOAD_SUCCESS, this.onConfigLoadSuccess.bind (this));
         this.addEventListener (SFS2X.SFSEvent.CONFIG_LOAD_FAILURE, this.onConfigLoadFailure.bind (this));
 
+        this.m_errorSignal = new XSignal ();
+
         this.m_connected = false;
 
         return this;
 	}
 
 //------------------------------------------------------------------------------------------
-    public connect (__url:string, __port:number, __connected?:any, __disconnected?:any):SFSManager {
+    public connect (__url:string, __port:number, __connected?:any,  __error?:any, __disconnected?:any):SFSManager {
         this.m_sfs.connect (__url, __port);
 
         if (__connected != null) {
@@ -51,6 +55,12 @@ export class SFSManager {
 
         if (__disconnected != null) {
             this.once (SFS2X.SFSEvent.CONNECTION_LOST, __disconnected)
+        }
+        
+        if (__error != null) {
+            this.addErrorListener (() => {
+                __error ();
+            })
         }
 
         return this;
@@ -71,12 +81,19 @@ export class SFSManager {
 //------------------------------------------------------------------------------------------
 	public cleanup ():void {
         this.removeAllEventListeners ();
+
+        this.m_errorSignal.removeAllListeners ();
 	}
     
 //------------------------------------------------------------------------------------------
     public getSFS ():SFS2X.SmartFox {
         return this.m_sfs;
     }
+
+	//------------------------------------------------------------------------------------------
+	public addErrorListener (__listener:any):number {
+		return this.m_errorSignal.addListener (__listener);
+	}
 
 //------------------------------------------------------------------------------------------
     public on (__eventName:string, __listener:any):any {
@@ -139,6 +156,8 @@ export class SFSManager {
             console.log ("Connection failed. Is the server running at all?");
 
             this.m_connected = false;
+
+            this.m_errorSignal.fireSignal ();
         }
     }
 
