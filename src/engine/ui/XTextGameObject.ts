@@ -75,6 +75,21 @@ export class XTextGameObject extends XGameObject {
 	}
 
 //------------------------------------------------------------------------------------------
+	public get width ():number {
+		return this.m_textSprite.bitmapText.width;
+	}
+
+//------------------------------------------------------------------------------------------
+	public get height ():number {
+		return this.m_textSprite.bitmapText.height;
+	}
+
+//------------------------------------------------------------------------------------------
+	public get textSprite ():XTextSprite {
+		return this.m_textSprite;
+	}
+
+//------------------------------------------------------------------------------------------
 	public get text ():string {
 		return this.m_textSprite.text;
 	}
