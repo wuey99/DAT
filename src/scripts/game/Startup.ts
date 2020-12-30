@@ -30,7 +30,7 @@ import { FlockLeader } from '../test/FlockLeader';
 //------------------------------------------------------------------------------------------
 export class Startup extends XState {
 	public m_statusMessage:XTextGameObject;
-	public m_resizeListenerID:number;
+	// public m_resizeListenerID:number;
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -84,8 +84,8 @@ export class Startup extends XState {
 		this.horizontalPercent (this.m_statusMessage, 0.50);
 		this.verticalPercent (this.m_statusMessage, 1.0);
 
-		this.m_resizeListenerID = this.m_XApp.addWindowResizeListener (this.resize.bind (this));
-		this.resize ();
+		// this.m_resizeListenerID = this.m_XApp.addWindowResizeListener (this.resize.bind (this));
+		// this.resize ();
 
 		return this;
 	}
@@ -94,10 +94,11 @@ export class Startup extends XState {
 	public cleanup ():void {
 		super.cleanup ();
 		
-		this.m_XApp.removeWindowResizeListener (this.m_resizeListenerID);
+		// this.m_XApp.removeWindowResizeListener (this.m_resizeListenerID);
 	}
 	
 //------------------------------------------------------------------------------------------
+	/*
 	public resize ():void {
 		this.m_XApp.getRenderer ().resize (this.m_XApp.getWindowWidth (), this.m_XApp.getWindowHeight ());
 
@@ -137,6 +138,7 @@ export class Startup extends XState {
 		__layer.scale.x = __scaleX * G.scaleRatio;
 		__layer.scale.y = __scaleY * G.scaleRatio;
 	}
+	*/
 
 //------------------------------------------------------------------------------------------
 	public getActualWidth ():number {
