@@ -30,6 +30,7 @@ import { FlockLeader } from '../test/FlockLeader';
 //------------------------------------------------------------------------------------------
 export class Startup extends XState {
 	public m_statusMessage:XTextGameObject;
+	public script:XTask;
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -49,11 +50,10 @@ export class Startup extends XState {
 
 		console.log (": guid: ", GUID.create ());
 
-		var __leader:FlockLeader = world.addGameObject (FlockLeader, 0, 0.0, false) as FlockLeader;
-		__leader.afterSetup ([]);
+		this.script = this.addEmptyTask ();
 
-        var __gameObject:ConnectionManager = this.world.addGameObject (ConnectionManager, 0, 0.0) as ConnectionManager;
-		__gameObject.afterSetup ([]);
+        var __connectionManager:ConnectionManager = this.world.addGameObject (ConnectionManager, 0, 0.0) as ConnectionManager;
+		__connectionManager.afterSetup ([]);
 
 		this.createBitmapFont (
 			"Nunito",
@@ -66,22 +66,9 @@ export class Startup extends XState {
 			{chars: this.getBitmapFontChars ()}
 		);
 			
-		this.m_statusMessage = this.addGameObjectAsChild (XTextGameObject, 0, 0.0) as XTextGameObject;
-		this.m_statusMessage.afterSetup ([]);
+		this.createStatusMessage ();
 
-		this.m_statusMessage.setupText (
-			500,
-			64,
-			"hello world",
-			"Nunito",
-			100,
-			0xff0000,
-			true,
-			"center", "center"
-		);
-
-		this.horizontalPercent (this.m_statusMessage, 0.50);
-		this.verticalPercent (this.m_statusMessage, 1.0);
+		this.Connect_Script ();
 
 		return this;
 	}
@@ -92,6 +79,33 @@ export class Startup extends XState {
 	}
 	
 //------------------------------------------------------------------------------------------
+	public createStatusMessage ():void {
+		this.m_statusMessage = this.addGameObjectAsChild (XTextGameObject, 0, 0.0) as XTextGameObject;
+		this.m_statusMessage.afterSetup ([]);
+
+		this.m_statusMessage.setupText (
+			-1,
+			64,
+			"",
+			"Nunito",
+			75,
+			0x0000ff,
+			true,
+			"center", "center"
+		);
+
+		this.horizontalPercent (this.m_statusMessage, 0.50);
+		this.verticalPercent (this.m_statusMessage, 0.50);
+	}
+
+//------------------------------------------------------------------------------------------
+	public setStatusMessage (__text:string):void {
+		this.m_statusMessage.text = __text;
+
+		this.horizontalPercent (this.m_statusMessage, 0.50);
+	}
+
+//------------------------------------------------------------------------------------------
 	public getActualWidth ():number {
 		return G.SCREEN_WIDTH;
 	}
@@ -99,6 +113,140 @@ export class Startup extends XState {
 //------------------------------------------------------------------------------------------
 	public getActualHeight ():number {
 		return G.SCREEN_HEIGHT;
+	}
+
+	//------------------------------------------------------------------------------------------
+	public Connect_Script ():void {
+		this.setStatusMessage ("Connecting to Server...");
+
+		this.script.gotoTask ([
+				
+			//------------------------------------------------------------------------------------------
+			// control
+			//------------------------------------------------------------------------------------------
+			() => {
+				this.script.addTask ([
+					XTask.WAIT1000, 1 * 1000,
+
+					XTask.LABEL, "loop",
+						XTask.WAIT, 0x0100,
+
+						XTask.FLAGS, (__task:XTask) => {
+							__task.ifTrue (ConnectionManager.instance ().isConnected ());
+						}, XTask.BNE, "loop",
+
+						() => {
+							this.LoginToZone_Script ();
+						},
+
+					XTask.RETN,
+				]);	
+			},
+				
+			//------------------------------------------------------------------------------------------
+			// animation
+			//------------------------------------------------------------------------------------------	
+			XTask.LABEL, "loop",
+                XTask.WAIT, 0x0100,
+					
+				XTask.GOTO, "loop",
+				
+			XTask.RETN,
+				
+			//------------------------------------------------------------------------------------------			
+		]);
+			
+	//------------------------------------------------------------------------------------------
+	}
+
+	//------------------------------------------------------------------------------------------
+	public LoginToZone_Script ():void {
+		this.setStatusMessage ("Logging into Zone...");
+
+		this.script.gotoTask ([
+				
+			//------------------------------------------------------------------------------------------
+			// control
+			//------------------------------------------------------------------------------------------
+			() => {
+				this.script.addTask ([
+					XTask.WAIT1000, 1 * 1000,
+
+					XTask.LABEL, "loop",
+						XTask.WAIT, 0x0100,
+
+						XTask.FLAGS, (__task:XTask) => {
+							__task.ifTrue (ConnectionManager.instance ().isLoggedIntoZone ());
+						}, XTask.BNE, "loop",
+
+						() => {
+							this.Connected_Script ();
+						},
+
+					XTask.RETN,
+				]);	
+			},
+				
+			//------------------------------------------------------------------------------------------
+			// animation
+			//------------------------------------------------------------------------------------------	
+			XTask.LABEL, "loop",
+                XTask.WAIT, 0x0100,
+					
+				XTask.GOTO, "loop",
+				
+			XTask.RETN,
+				
+			//------------------------------------------------------------------------------------------			
+		]);
+			
+	//------------------------------------------------------------------------------------------
+	}
+	
+	//------------------------------------------------------------------------------------------
+	public Connected_Script ():void {
+		this.setStatusMessage ("Logged in!");
+
+		this.script.gotoTask ([
+				
+			//------------------------------------------------------------------------------------------
+			// control
+			//------------------------------------------------------------------------------------------
+			() => {
+				this.script.addTask ([
+					XTask.WAIT1000, 1 * 1000,
+
+					() => {
+						console.log (": logged in: ", window.location);
+
+						switch (window.location.hash) {
+							case "#moderator":
+								this.getGameInstance ().gotoState ("CreateRoom");
+								break;
+							default:
+								this.getGameInstance ().gotoState ("JoinRoom");
+								break;
+						}
+					},
+
+					XTask.RETN,
+				]);	
+			},
+				
+			//------------------------------------------------------------------------------------------
+			// animation
+			//------------------------------------------------------------------------------------------	
+			XTask.LABEL, "loop",
+                XTask.WAIT, 0x0100,
+					
+				XTask.GOTO, "loop",
+				
+			XTask.RETN,
+				
+			//------------------------------------------------------------------------------------------			
+		]);
+			
+	//------------------------------------------------------------------------------------------
 	}
 
 //------------------------------------------------------------------------------------------

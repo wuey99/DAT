@@ -25,7 +25,7 @@ import { ConnectionManager } from '../sfs/ConnectionManager';
 import { XType } from '../../engine/type/XType';
 
 //------------------------------------------------------------------------------------------
-export class CreateRoom extends XState {
+export class JoinRoom extends XState {
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -42,24 +42,6 @@ export class CreateRoom extends XState {
 //------------------------------------------------------------------------------------------
 	public afterSetup (__params:Array<any> = null):XGameObject {
         super.afterSetup (__params);
-
-		var __testButton3:XTextSpriteButton = this.addGameObjectAsChild (XTextSpriteButton, 0, 0.0, false) as XTextSpriteButton;
-		__testButton3.afterSetup ([
-			"StandardButton",
-			true, 10, 300, 100,
-			"press me",
-			"Aller",
-			50,
-			0x0000ff,
-			0xff0000,
-			0x00ff00,
-			0x0000ff,
-			0x0000ff,
-			false,
-			"center", "center"
-		]);
-		__testButton3.x = 1924;
-		__testButton3.y = 512;
 	
 		return this;
 	}

@@ -20,6 +20,7 @@ import { G } from '../app/G';
 import { XState } from '../state/XState';
 import { PausableListener} from '../events/PausableListener';
 import { XTextSprite } from '../sprite/XTextSprite';
+import { TextInput } from 'pixi-textinput-v5';
 
 //------------------------------------------------------------------------------------------
 export class XGameObject extends PIXI.Sprite {
@@ -383,7 +384,7 @@ export class XGameObject extends PIXI.Sprite {
 	}
 		
 //------------------------------------------------------------------------------------------
-	public verticalPercent (__displayObject:PIXI.Sprite, __percent:number):XGameObject {
+	public verticalPercent (__displayObject:PIXI.Sprite | TextInput, __percent:number):XGameObject {
 		var __y:number = (this.getActualHeight () - __displayObject.height) * __percent;
 			
 		__displayObject.y = __y;
@@ -392,7 +393,7 @@ export class XGameObject extends PIXI.Sprite {
 	}
 		
 //------------------------------------------------------------------------------------------
-	public verticalPercentCentered (__displayObject:PIXI.Sprite, __percent:number):XGameObject {
+	public verticalPercentCentered (__displayObject:PIXI.Sprite | TextInput, __percent:number):XGameObject {
 		var __y:number = this.getActualHeight () * __percent;
 			
 		__displayObject.y = __y;
@@ -406,7 +407,7 @@ export class XGameObject extends PIXI.Sprite {
 	}
 		
 //------------------------------------------------------------------------------------------
-	public horizontalPercent (__displayObject:PIXI.Sprite, __percent:number):XGameObject {
+	public horizontalPercent (__displayObject:PIXI.Sprite | TextInput, __percent:number):XGameObject {
 		var __x:number = (this.getActualWidth () - __displayObject.width) * __percent;
 			
 		__displayObject.x = __x;
@@ -415,7 +416,7 @@ export class XGameObject extends PIXI.Sprite {
 	}
 		
 //------------------------------------------------------------------------------------------
-	public horizontalPercentCentered (__displayObject:PIXI.Sprite, __percent:number):XGameObject {
+	public horizontalPercentCentered (__displayObject:PIXI.Sprite | TextInput, __percent:number):XGameObject {
 		var __x:number = this.getActualWidth () * __percent;
 			
 		__displayObject.x = __x;

@@ -15,6 +15,8 @@ import { XGameObject} from '../../engine/gameobject/XGameObject';
 import { XGameController } from '../../engine/state/XGameController';
 import { Startup } from './Startup';
 import { XSimpleXMLNode } from '../../engine/xml/XSimpleXMLNode';
+import { CreateRoom } from '../moderator/CreateRoom';
+import { JoinRoom } from '../player/JoinRoom';
 
 //------------------------------------------------------------------------------------------
 export class DATGameController extends XGameController {
@@ -36,6 +38,8 @@ export class DATGameController extends XGameController {
 		super.afterSetup (__params);
 
 		this.getGameInstance ().registerState ("Startup", Startup);
+		this.getGameInstance ().registerState ("CreateRoom", CreateRoom);
+		this.getGameInstance ().registerState ("JoinRoom", JoinRoom);
 
 		this.m_XApp.getXProjectManager ().pauseAllResourceManagers ();
 

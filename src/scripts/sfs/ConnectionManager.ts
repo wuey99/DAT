@@ -81,23 +81,33 @@ export class ConnectionManager extends XGameObject {
 	}
 
 	//------------------------------------------------------------------------------------------
-	public addConnectedistener (__listener:any):number {
+	public addConnectedListener (__listener:any):number {
 		return this.m_connectedSignal.addListener (__listener);
 	}
 
 	//------------------------------------------------------------------------------------------
-	public addDisconnectedistener (__listener:any):number {
+	public addDisconnectedListener (__listener:any):number {
 		return this.m_disconnectedSignal.addListener (__listener);
 	}
 
 	//------------------------------------------------------------------------------------------
-	public addLoggedIntoZoneistener (__listener:any):number {
+	public addLoggedIntoZoneListener (__listener:any):number {
 		return this.m_loggedInToZoneSignal.addListener (__listener);
 	}
 
 	//------------------------------------------------------------------------------------------
-	public addLoggedOutOfZoneistener (__listener:any):number {
+	public addLoggedOutOfZoneListener (__listener:any):number {
 		return this.m_loggedInToZoneSignal.addListener (__listener);
+	}
+
+	//------------------------------------------------------------------------------------------
+	public isConnected ():boolean {
+		return this.m_connected;
+	}
+
+	//------------------------------------------------------------------------------------------
+	public isLoggedIntoZone ():boolean {
+		return this.m_loggedinToZone;
 	}
 
 	//------------------------------------------------------------------------------------------

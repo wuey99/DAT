@@ -67,8 +67,18 @@ import { XType } from '../type/XType';
 		}
 		
 //------------------------------------------------------------------------------------------
+		public get width ():number {
+			return this.m_bitmapText.width;
+		}
+
+//------------------------------------------------------------------------------------------
+		public get height ():number {
+			return this.m_bitmapText.height;
+		}
+
+//------------------------------------------------------------------------------------------
 		public format ():void {
-			switch (this.m_horizontalAlignment) {
+			if (this.m_width > 0) switch (this.m_horizontalAlignment) {
 				case "center":
 					this.m_bitmapText.x = (this.m_width - this.m_bitmapText.width) / 2;
 					break;
@@ -80,7 +90,7 @@ import { XType } from '../type/XType';
 					break;
 			}
 
-			switch (this.m_verticalAlignment) {
+			if (this.m_height > 0) switch (this.m_verticalAlignment) {
 				case "center":
 					this.m_bitmapText.y = (this.m_height - this.m_bitmapText.height) / 2;
 					break;
@@ -104,7 +114,7 @@ import { XType } from '../type/XType';
 		}
 		
 		public set text (__text:string) {
-			this.m_bitmapText.text = __text;
+			this.m_bitmapText.text = __text; this.format ();
 		}
 
 //------------------------------------------------------------------------------------------
