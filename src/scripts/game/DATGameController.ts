@@ -41,6 +41,17 @@ export class DATGameController extends XGameController {
 		this.getGameInstance ().registerState ("CreateRoom", CreateRoom);
 		this.getGameInstance ().registerState ("JoinRoom", JoinRoom);
 
+		this.createBitmapFont (
+			"Nunito",
+			{
+				fontFamily: "Nunito",
+				fontSize: 60,
+				strokeThickness: 0,
+				fill: "0xffffff",         
+			},
+			{chars: this.getBitmapFontChars ()}
+		);
+		
 		this.m_XApp.getXProjectManager ().pauseAllResourceManagers ();
 
 		this.addTask ([

@@ -19,14 +19,17 @@ import { SFSManager } from '../../engine/sfs/SFSManager';
 import { XSpriteButton } from '../../engine/ui/XSpriteButton';
 import { XTextButton } from '../../engine/ui/XTextButton';
 import { XTextSpriteButton } from '../../engine/ui/XTextSpriteButton';
+import { XTextGameObject } from '../../engine/ui/XTextGameObject';
 import { XTextSprite } from '../../engine/sprite/XTextSprite';
 import { TextInput } from 'pixi-textinput-v5';
 import { ConnectionManager } from '../sfs/ConnectionManager';
 import { XType } from '../../engine/type/XType';
-import { DATState } from '../scene/DATState';
+import { G } from '../../engine/app/G';
+import { FlockLeader } from '../test/FlockLeader';
 
 //------------------------------------------------------------------------------------------
-export class JoinRoom extends DATState {
+export class DATState extends XState {
+	public script:XTask;
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -43,14 +46,24 @@ export class JoinRoom extends DATState {
 //------------------------------------------------------------------------------------------
 	public afterSetup (__params:Array<any> = null):XGameObject {
         super.afterSetup (__params);
-	
+
 		return this;
 	}
 
 //------------------------------------------------------------------------------------------
 	public cleanup ():void {
-        super.cleanup ();
+		super.cleanup ();
 	}
 	
+//------------------------------------------------------------------------------------------
+	public getActualWidth ():number {
+		return G.SCREEN_WIDTH;
+	}
+
+//------------------------------------------------------------------------------------------
+	public getActualHeight ():number {
+		return G.SCREEN_HEIGHT;
+	}
+
 //------------------------------------------------------------------------------------------
 }

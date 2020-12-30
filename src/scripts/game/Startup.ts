@@ -25,10 +25,11 @@ import { TextInput } from 'pixi-textinput-v5';
 import { ConnectionManager } from '../sfs/ConnectionManager';
 import { XType } from '../../engine/type/XType';
 import { G } from '../../engine/app/G';
+import { DATState } from '../scene/DATState';
 import { FlockLeader } from '../test/FlockLeader';
 
 //------------------------------------------------------------------------------------------
-export class Startup extends XState {
+export class Startup extends DATState {
 	public m_statusMessage:XTextGameObject;
 	public script:XTask;
 
@@ -54,17 +55,6 @@ export class Startup extends XState {
 
         var __connectionManager:ConnectionManager = this.world.addGameObject (ConnectionManager, 0, 0.0) as ConnectionManager;
 		__connectionManager.afterSetup ([]);
-
-		this.createBitmapFont (
-			"Nunito",
-			{
-				fontFamily: "Nunito",
-				fontSize: 60,
-				strokeThickness: 0,
-				fill: "0xffffff",         
-			},
-			{chars: this.getBitmapFontChars ()}
-		);
 			
 		this.createStatusMessage ();
 

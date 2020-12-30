@@ -24,10 +24,13 @@ import { TextInput } from 'pixi-textinput-v5';
 import { ConnectionManager } from '../sfs/ConnectionManager';
 import { XType } from '../../engine/type/XType';
 import { G } from '../../engine/app/G';
+import { DATState } from '../scene/DATState';
 import { FlockLeader } from '../test/FlockLeader';
 
 //------------------------------------------------------------------------------------------
-export class CreateRoom extends XState {
+export class CreateRoom extends DATState {
+	public m_roomTextInput:TextInput;
+	public m_createRoomButton:XTextSpriteButton;
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -44,17 +47,6 @@ export class CreateRoom extends XState {
 //------------------------------------------------------------------------------------------
 	public afterSetup (__params:Array<any> = null):XGameObject {
         super.afterSetup (__params);
-	
-		this.createBitmapFont (
-			"Nunito",
-			{
-				fontFamily: "Nunito",
-				fontSize: 60,
-				strokeThickness: 0,
-				fill: "0xffffff",         
-			},
-			{chars: this.getBitmapFontChars ()}
-		);
 	
 		this.setupUI ();
 
@@ -80,21 +72,21 @@ export class CreateRoom extends XState {
 			true,
 			"center", "center"
 		);
-		this.addSortableChild (__roomLabel, 0, 0.0, true);
+		this.addSortableChild (__roomLabel, 0, 0.0, false);
 		this.horizontalPercent (__roomLabel, 0.33);
 		this.verticalPercent (__roomLabel, __ypercent);
 
-		var __textInput:TextInput = new TextInput (
+		var __textInput:TextInput = this.m_roomTextInput = new TextInput (
 			{
 				input: {fontSize: '25px'}, 
 				box: {fill: 0xc0c0c0},
 			}
 		);
-		this.addSortableChild (__textInput, 0, 0.0, true);
+		this.addSortableChild (__textInput, 0, 0.0, false);
 		this.horizontalPercent (__textInput, 0.50);
 		this.verticalPercent (__textInput, __ypercent);
 
-		var __createButton:XTextSpriteButton = this.addGameObjectAsChild (XTextSpriteButton, 0, 0.0, false) as XTextSpriteButton;
+		var __createButton:XTextSpriteButton = this.m_createRoomButton = this.addGameObjectAsChild (XTextSpriteButton, 0, 0.0, false) as XTextSpriteButton;
 		__createButton.afterSetup ([
 			"StandardButton",
 			true, 10, 150, 60,
@@ -109,19 +101,9 @@ export class CreateRoom extends XState {
 			false,
 			"center", "center"
 		]);
-		this.addSortableChild (__createButton, 0, 0.0, true);
+		this.addSortableChild (__createButton, 0, 0.0, false);
 		this.horizontalPercent (__createButton, 0.66);
 		this.verticalPercent (__createButton, __ypercent);
-	}
-
-//------------------------------------------------------------------------------------------
-	public getActualWidth ():number {
-		return G.SCREEN_WIDTH;
-	}
-
-//------------------------------------------------------------------------------------------
-	public getActualHeight ():number {
-		return G.SCREEN_HEIGHT;
 	}
 
 //------------------------------------------------------------------------------------------
