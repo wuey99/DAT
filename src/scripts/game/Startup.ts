@@ -30,7 +30,6 @@ import { FlockLeader } from '../test/FlockLeader';
 //------------------------------------------------------------------------------------------
 export class Startup extends XState {
 	public m_statusMessage:XTextGameObject;
-	// public m_resizeListenerID:number;
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -84,62 +83,14 @@ export class Startup extends XState {
 		this.horizontalPercent (this.m_statusMessage, 0.50);
 		this.verticalPercent (this.m_statusMessage, 1.0);
 
-		// this.m_resizeListenerID = this.m_XApp.addWindowResizeListener (this.resize.bind (this));
-		// this.resize ();
-
 		return this;
 	}
 
 //------------------------------------------------------------------------------------------
 	public cleanup ():void {
 		super.cleanup ();
-		
-		// this.m_XApp.removeWindowResizeListener (this.m_resizeListenerID);
 	}
 	
-//------------------------------------------------------------------------------------------
-	/*
-	public resize ():void {
-		this.m_XApp.getRenderer ().resize (this.m_XApp.getWindowWidth (), this.m_XApp.getWindowHeight ());
-
-		//------------------------------------------------------------------------------------------
-		// scale the entire stage
-		//------------------------------------------------------------------------------------------		
-		this.m_XApp.getStage ().scale.x = 1.0;
-		this.m_XApp.getStage ().scale.y = 1.0;
-
-		var i:number;
-
-		for (i=0; i<XWorld.MAX_LAYERS; i++) {
-			var __x:number = 0;
-			var __y:number = 0;
-	
-			var __screenWidth:number = this.m_XApp.getScreenWidth ();
-			var __screenHeight:number = this.m_XApp.getScreenHeight ();
-	
-			var __scaleX:number = this.m_XApp.getCanvasWidth () / __screenWidth;
-			var __scaleY:number = this.m_XApp.getCanvasHeight () / __screenHeight;
-	
-			var __scaleRatio:number = Math.max (__scaleX, __scaleY);
-				
-			__x = (this.m_XApp.getCanvasWidth () - __screenWidth * __scaleRatio) / 2;
-			__y = (this.m_XApp.getCanvasHeight () - __screenHeight * __scaleRatio) / 2;
-
-			this.scaleLayer (i, __x, __scaleRatio, __y, __scaleRatio);
-		}
-	}
-
-//------------------------------------------------------------------------------------------
-	public scaleLayer (__layerNum:number, __x:number, __scaleX:number, __y:number, __scaleY:number):void {
-		var __layer:XSpriteLayer = this.world.getLayer (__layerNum);
-
-		__layer.x = __x;
-		__layer.y = __y;
-		__layer.scale.x = __scaleX * G.scaleRatio;
-		__layer.scale.y = __scaleY * G.scaleRatio;
-	}
-	*/
-
 //------------------------------------------------------------------------------------------
 	public getActualWidth ():number {
 		return G.SCREEN_WIDTH;
