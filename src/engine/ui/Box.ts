@@ -14,13 +14,13 @@ export class Box extends XGameObject {
     public m_width:number;
     public m_height:number;
     public m_justify:string;
-    public m_items:Array<PIXI.Sprite | TextInput>;
     public m_spacing:number;
     public m_padding:number;
     public m_topPadding:number;
     public m_bottomPadding:number;
     public m_leftPadding:number;
     public m_rightPadding:number;
+    public m_items:Array<PIXI.Sprite | TextInput>;
 
 //------------------------------------------------------------------------------------------
 	public constructor () {
@@ -60,13 +60,20 @@ export class Box extends XGameObject {
     }
 
 //------------------------------------------------------------------------------------------
+    public get width ():number {
+        return this.m_width;
+    }
+
+//------------------------------------------------------------------------------------------
+    public get height ():number {
+        return this.m_height;
+    }
+
+//------------------------------------------------------------------------------------------
     public addItem (__item:PIXI.Sprite | TextInput, __layer:number = -1, __depth:number = -1, __visible:boolean = false):void {
         this.m_items.push (__item);
 
-        if (__layer < 0) __layer = this.getLayer ();
-        if (__depth < 0) __depth = this.getDepth ();
-
-        this.addSortableChild (__item, __layer, __depth, __visible);
+        this.reorder ();
     }
 
 //------------------------------------------------------------------------------------------

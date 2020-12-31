@@ -65,8 +65,9 @@ export class CreateRoom extends DATState {
 		var __ypercent:number = 0.25;
 
 		var __hbox:HBox = this.addGameObjectAsChild (HBox, 0, 0.0, false) as HBox;
-		__hbox.afterSetup ([100, 100, XJustify.SPACE_EVENLY]);
-	
+		__hbox.afterSetup ([1000, 100, XJustify.SPACE_BETWEEN]);
+		this.addSortableChild (__hbox, 0, 0.0, false);
+
 		var __roomLabel:XTextSprite = this.createXTextSprite (
 			-1,
 			-1,
@@ -77,9 +78,8 @@ export class CreateRoom extends DATState {
 			true,
 			"center", "center"
 		);
-		this.addSortableChild (__roomLabel, 0, 0.0, false);
-		this.horizontalPercent (__roomLabel, 0.33);
-		this.verticalPercent (__roomLabel, __ypercent);
+		__hbox.addItem (__roomLabel);
+		__hbox.addSortableChild (__roomLabel, 0, 0.0, false);
 
 		var __textInput:TextInput = this.m_roomTextInput = new TextInput (
 			{
@@ -87,11 +87,10 @@ export class CreateRoom extends DATState {
 				box: {fill: 0xc0c0c0},
 			}
 		);
-		this.addSortableChild (__textInput, 0, 0.0, false);
-		this.horizontalPercent (__textInput, 0.50);
-		this.verticalPercent (__textInput, __ypercent);
+		__hbox.addItem (__textInput);
+		__hbox.addSortableChild (__textInput, 0, 0.0, false);
 
-		var __createButton:XTextSpriteButton = this.m_createRoomButton = this.addGameObjectAsChild (XTextSpriteButton, 0, 0.0, false) as XTextSpriteButton;
+		var __createButton:XTextSpriteButton = this.m_createRoomButton = __hbox.addGameObjectAsChild (XTextSpriteButton, 0, 0.0, false) as XTextSpriteButton;
 		__createButton.afterSetup ([
 			"StandardButton",
 			true, 10, 150, 60,
@@ -106,9 +105,10 @@ export class CreateRoom extends DATState {
 			false,
 			"center", "center"
 		]);
-		this.addSortableChild (__createButton, 0, 0.0, false);
-		this.horizontalPercent (__createButton, 0.66);
-		this.verticalPercent (__createButton, __ypercent);
+		__hbox.addItem (__createButton);
+
+		this.horizontalPercent (__hbox, 0.50);
+		this.verticalPercent (__hbox, __ypercent);
 	}
 
 //------------------------------------------------------------------------------------------

@@ -15,20 +15,113 @@ import { XJustify } from './XJustify';
 export class VBox extends Box {
 
 //------------------------------------------------------------------------------------------
-    public reorder ():void {
-        super.reorder ();
+public reorder ():void {
+    super.reorder ();
 
-        switch (this.m_justify) {
-            case XJustify.START:
-                break;
-            case XJustify.END:
-                break;
-            case XJustify.SPACE_EVENLY:
-                break;
-            case XJustify.NONE:
-                break;
-        }
+    var __y:number = 0;
+    var i:number;
+
+    //------------------------------------------------------------------------------------------
+    switch (this.m_justify) {
+        
+        //------------------------------------------------------------------------------------------
+        case XJustify.START:
+            __y = this.m_topPadding;
+
+            for (i = 0; i < this.m_items.length; i++) {
+                this.m_items[i].y = __y;
+                __y += this.m_items[i].height + this.m_spacing;
+            }
+
+            break;
+
+        //------------------------------------------------------------------------------------------
+        case XJustify.END:
+            __y = this.getActualHeight () - this.m_items[this.m_items.length - 1].height;
+
+            for (i = this.m_items.length - 1; i >= 0; i--) {
+                this.m_items[i].y = __y;
+                __y -= this.m_items[i].height + this.m_spacing;
+            }
+
+            break;
+
+        //------------------------------------------------------------------------------------------
+        case XJustify.CENTER:
+            var __height:number = 0;
+
+            for (i = 0; i < this.m_items.length; i++) {
+                __height += this.m_items[i].height;
+            }
+
+            __y = this.m_topPadding + (this.getActualHeight () - __height) / 2;
+
+            for (i = 0; i < this.m_items.length; i++) {
+                this.m_items[i].y = __y;
+                __y += this.m_items[i].height;
+            }
+
+            break;
+
+        //------------------------------------------------------------------------------------------
+        case XJustify.SPACE_BETWEEN:
+            var __height:number = 0;
+            var __spacing:number = 0;
+
+            if (this.m_items.length > 1) {
+                for (i = 0; i < this.m_items.length; i++) {
+                    __height += this.m_items[i].height;
+                }
+
+                __spacing = (this.getActualHeight () - __height) / (this.m_items.length - 1);
+            }
+
+            __y = this.m_topPadding;
+
+            for (i = 0; i < this.m_items.length; i++) {
+                this.m_items[i].y = __y;
+                __y += this.m_items[i].height + __spacing;
+            }
+
+            break;
+
+        //------------------------------------------------------------------------------------------
+        case XJustify.SPACE_AROUND:
+            var __height:number = 0;
+            var __spacing:number = 0;
+
+            if (this.m_items.length > 1) {
+                for (i = 0; i < this.m_items.length; i++) {
+                    __height += this.m_items[i].height;
+                }
+
+                __spacing = (this.getActualHeight () - __height / 4 - __height) / (this.m_items.length - 1);
+            }
+
+            __y = this.m_topPadding + __height / 8;
+
+            for (i = 0; i < this.m_items.length; i++) {
+                this.m_items[i].y = __y;
+                __y += this.m_items[i].height + __spacing;
+            }
+
+            break;
+
+        //------------------------------------------------------------------------------------------
+        case XJustify.SPACE_EVENLY:
+            for (i = 0; i < this.m_items.length; i++) {
+                __y = i / (this.m_items.length - 1);
+
+                this.verticalPercent (this.m_items[i], __y);
+            }
+
+            break;
+
+        //------------------------------------------------------------------------------------------
+        case XJustify.NONE:
+            break;
     }
+}
 
 //------------------------------------------------------------------------------------------	
 }
