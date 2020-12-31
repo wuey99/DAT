@@ -18,7 +18,11 @@ export class VBox extends Box {
 public reorder ():void {
     super.reorder ();
 
+    //------------------------------------------------------------------------------------------
     var __y:number = 0;
+    var __height:number = 0;
+    var __spacing:number = 0;
+
     var i:number;
 
     //------------------------------------------------------------------------------------------
@@ -48,8 +52,6 @@ public reorder ():void {
 
         //------------------------------------------------------------------------------------------
         case XJustify.CENTER:
-            var __height:number = 0;
-
             for (i = 0; i < this.m_items.length; i++) {
                 __height += this.m_items[i].height;
             }
@@ -65,9 +67,6 @@ public reorder ():void {
 
         //------------------------------------------------------------------------------------------
         case XJustify.SPACE_BETWEEN:
-            var __height:number = 0;
-            var __spacing:number = 0;
-
             if (this.m_items.length > 1) {
                 for (i = 0; i < this.m_items.length; i++) {
                     __height += this.m_items[i].height;
@@ -87,9 +86,6 @@ public reorder ():void {
 
         //------------------------------------------------------------------------------------------
         case XJustify.SPACE_AROUND:
-            var __height:number = 0;
-            var __spacing:number = 0;
-
             if (this.m_items.length > 1) {
                 for (i = 0; i < this.m_items.length; i++) {
                     __height += this.m_items[i].height;

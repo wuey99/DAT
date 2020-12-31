@@ -14,8 +14,6 @@ export class XButton extends XGameObject {
 	public m_mouseDownSignal:XSignal;
 	public m_mouseUpSignal:XSignal;
 	public m_mouseOutSignal:XSignal;
-	public m_keyboardDownSignal:XSignal;
-	public m_keyboardUpSignal:XSignal;
 
 	public static NORMAL_STATE:number = 0;
 	public static OVER_STATE:number = 1;
@@ -49,8 +47,6 @@ export class XButton extends XGameObject {
         this.m_mouseDownSignal = this.createXSignal ();	
         this.m_mouseOutSignal = this.createXSignal ();
         this.m_mouseUpSignal = this.createXSignal ();
-        this.m_keyboardDownSignal = this.createXSignal ();
-        this.m_keyboardUpSignal = this.createXSignal ();
         
         this.createSprites ();
         
@@ -87,7 +83,6 @@ export class XButton extends XGameObject {
 				this.addPausableEventListener ("pointerup", this.m_sprite, this.onMouseUp.bind (this));
 				this.addPausableEventListener ("pointerout", this.m_sprite, this.onMouseOut.bind (this));
 				this.addPausableEventListener ("pointerupoutside", this.m_sprite, this.onMouseOut.bind (this));
-                // m_keyboardDownListener = xxx.addKeyboardDownListener (onKeyboardDown);
 			},
 				
 			XTask.RETN,
@@ -104,27 +99,7 @@ export class XButton extends XGameObject {
 //------------------------------------------------------------------------------------------
 	public getParams (__params:Array<any> = null):void {
 	}
-
-//------------------------------------------------------------------------------------------
-	public onKeyboardDown (e:PIXI.InteractionEvent):void {
-		this.m_keyboardDownSignal.fireSignal (e);
-	}
-		
-//------------------------------------------------------------------------------------------
-	public onKeyboardUp (e:PIXI.InteractionEvent):void {
-		this.m_keyboardUpSignal.fireSignal (e);
-	}
-
-//------------------------------------------------------------------------------------------
-	public addKeyboardDownListener (__listener:any):number {
-		return this.m_keyboardDownSignal.addListener (__listener);
-	}
-		
-//------------------------------------------------------------------------------------------
-	public addKeyboardUpListener (__listener:any):number{
-		return this.m_keyboardUpSignal.addListener (__listener);
-	}
-		
+	
 //------------------------------------------------------------------------------------------
 	public createHighlightTask ():void {
 	}

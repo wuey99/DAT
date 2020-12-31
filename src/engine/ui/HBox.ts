@@ -18,7 +18,11 @@ export class HBox extends Box {
     public reorder ():void {
         super.reorder ();
 
+        //------------------------------------------------------------------------------------------
         var __x:number = 0;
+        var __width:number = 0;
+        var __spacing:number = 0;
+
         var i:number;
 
         //------------------------------------------------------------------------------------------
@@ -48,8 +52,6 @@ export class HBox extends Box {
 
             //------------------------------------------------------------------------------------------
             case XJustify.CENTER:
-                var __width:number = 0;
-    
                 for (i = 0; i < this.m_items.length; i++) {
                     __width += this.m_items[i].width;
                 }
@@ -65,9 +67,6 @@ export class HBox extends Box {
 
             //------------------------------------------------------------------------------------------
             case XJustify.SPACE_BETWEEN:
-                var __width:number = 0;
-                var __spacing:number = 0;
-
                 if (this.m_items.length > 1) {
                     for (i = 0; i < this.m_items.length; i++) {
                         __width += this.m_items[i].width;
@@ -87,9 +86,6 @@ export class HBox extends Box {
 
             //------------------------------------------------------------------------------------------
             case XJustify.SPACE_AROUND:
-                var __width:number = 0;
-                var __spacing:number = 0;
-
                 if (this.m_items.length > 1) {
                     for (i = 0; i < this.m_items.length; i++) {
                         __width += this.m_items[i].width;
