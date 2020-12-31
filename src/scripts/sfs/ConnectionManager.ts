@@ -195,7 +195,7 @@ export class ConnectionManager extends XGameObject {
                         () => {
                             console.log (": connected: ");
         
-                            SFSManager.instance ().send (new SFS2X.LoginRequest("FozzieTheBear", "", null, "BasicExamples"));
+                            SFSManager.instance ().send (new SFS2X.LoginRequest ("FozzieTheBear", "", null, "BasicExamples"));
 
                             SFSManager.instance ().once (SFS2X.SFSEvent.LOGIN, (e:SFS2X.SFSEvent) => {
 								console.log (": logged in: ", e);

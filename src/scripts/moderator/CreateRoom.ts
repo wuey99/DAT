@@ -25,6 +25,8 @@ import { ConnectionManager } from '../sfs/ConnectionManager';
 import { XType } from '../../engine/type/XType';
 import { G } from '../../engine/app/G';
 import { DATState } from '../scene/DATState';
+import { HBox } from '../../engine/ui/HBox';
+import { XJustify } from '../../engine/ui/XJustify';
 import { FlockLeader } from '../test/FlockLeader';
 
 //------------------------------------------------------------------------------------------
@@ -62,6 +64,9 @@ export class CreateRoom extends DATState {
 	public setupUI ():void {
 		var __ypercent:number = 0.25;
 
+		var __hbox:HBox = this.addGameObjectAsChild (HBox, 0, 0.0, false) as HBox;
+		__hbox.afterSetup ([100, 100, XJustify.SPACE_EVENLY]);
+	
 		var __roomLabel:XTextSprite = this.createXTextSprite (
 			-1,
 			-1,

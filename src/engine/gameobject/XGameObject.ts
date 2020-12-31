@@ -74,6 +74,8 @@ export class XGameObject extends PIXI.Sprite {
 
 	public m_poolClass:any;
 
+	public m_paramIndex:number;
+
 //------------------------------------------------------------------------------------------	
 	constructor () {
 		super ();
@@ -173,6 +175,8 @@ export class XGameObject extends PIXI.Sprite {
 	
 //------------------------------------------------------------------------------------------
 	public afterSetup (__params:Array<any> = null):XGameObject {
+		this.m_paramIndex = 0;
+		
 		return this;
 	}
 	
