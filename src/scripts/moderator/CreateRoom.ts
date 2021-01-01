@@ -52,6 +52,16 @@ export class CreateRoom extends DATState {
 	
 		this.setupUI ();
 
+		this.m_roomTextInput.on ("keydown", (e:any) => {
+			console.log (": event: ", e);
+		});
+
+		this.m_createRoomButton.addMouseUpListener (() => {
+			console.log (": mouse up: ");
+
+			this.createRoom ();
+		});
+
 		return this;
 	}
 
@@ -60,6 +70,23 @@ export class CreateRoom extends DATState {
         super.cleanup ();
 	}
 	
+//------------------------------------------------------------------------------------------
+	public createRoom ():void {
+		var __settings:SFS2X.RoomSettings = new SFS2X.RoomSettings ("DAT Room");
+		__settings.maxUsers = 6;
+		__settings.groupId = "DATRoom";
+
+		SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_ADD, (e:SFS2X.SFSEvent) => {
+			console.log (": onRoomAdded: ");
+		});
+
+		SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_CREATION_ERROR, (e:SFS2X.SFSEvent) => {
+			console.log (": onRoomCreationError: ");
+		});
+
+		SFSManager.instance ().send (new SFS2X.CreateRoomRequest (__settings));
+	}
+
 //------------------------------------------------------------------------------------------
 	public setupUI ():void {
 		var __ypercent:number = 0.25;
