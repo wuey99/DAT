@@ -26,6 +26,7 @@ import { XType } from '../../engine/type/XType';
 import { G } from '../../engine/app/G';
 import { DATState } from '../scene/DATState';
 import { HBox } from '../../engine/ui/HBox';
+import { VBox } from '../../engine/ui/VBox';
 import { XJustify } from '../../engine/ui/XJustify';
 import { FlockLeader } from '../test/FlockLeader';
 
@@ -52,9 +53,11 @@ export class CreateRoom extends DATState {
 	
 		this.setupUI ();
 
+		/*
 		this.m_roomTextInput.on ("keydown", (e:any) => {
-			console.log (": event: ", e);
+			console.log (": event: ", e, this.m_roomTextInput.text);
 		});
+		*/
 
 		this.m_createRoomButton.addMouseUpListener (() => {
 			console.log (": mouse up: ");
@@ -72,16 +75,16 @@ export class CreateRoom extends DATState {
 	
 //------------------------------------------------------------------------------------------
 	public createRoom ():void {
-		var __settings:SFS2X.RoomSettings = new SFS2X.RoomSettings ("DAT Room");
+		var __settings:SFS2X.RoomSettings = new SFS2X.RoomSettings (GUID.create ().substring (1, 18));
 		__settings.maxUsers = 6;
-		__settings.groupId = "DATRoom";
+		__settings.groupId = "default";
 
 		SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_ADD, (e:SFS2X.SFSEvent) => {
-			console.log (": onRoomAdded: ");
+			console.log (": onRoomAdded: ", e);
 		});
 
 		SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_CREATION_ERROR, (e:SFS2X.SFSEvent) => {
-			console.log (": onRoomCreationError: ");
+			console.log (": onRoomCreationError: ", e);
 		});
 
 		SFSManager.instance ().send (new SFS2X.CreateRoomRequest (__settings));
@@ -92,22 +95,29 @@ export class CreateRoom extends DATState {
 		var __ypercent:number = 0.25;
 
 		var __hbox:HBox = this.addGameObjectAsChild (HBox, 0, 0.0, false) as HBox;
-		__hbox.afterSetup ([1000, 100, XJustify.SPACE_BETWEEN]);
-		this.addSortableChild (__hbox, 0, 0.0, false);
+		__hbox.afterSetup ([400, 100, XJustify.SPACE_BETWEEN]);
+
+		var __vbox:VBox = __hbox.addGameObjectAsChild (VBox, 0, 0.0, false) as VBox;
+		__vbox.afterSetup ([250, 60, XJustify.CENTER]);
 
 		var __roomLabel:XTextSprite = this.createXTextSprite (
 			-1,
 			-1,
-			"Enter name of room to create",
+			"Create a new Game",
 			"Nunito",
 			25,
 			0x000000,
 			true,
 			"center", "center"
 		);
-		__hbox.addItem (__roomLabel);
-		__hbox.addSortableChild (__roomLabel, 0, 0.0, false);
 
+		__vbox.addItem (__roomLabel);
+		__vbox.addSortableChild (__roomLabel, 0, 0.0, false);
+		
+		__hbox.addItem (__vbox);
+		__hbox.addSortableChild (__vbox, 0, 0.0, false);
+
+		/*
 		var __textInput:TextInput = this.m_roomTextInput = new TextInput (
 			{
 				input: {fontSize: '25px'}, 
@@ -116,6 +126,7 @@ export class CreateRoom extends DATState {
 		);
 		__hbox.addItem (__textInput);
 		__hbox.addSortableChild (__textInput, 0, 0.0, false);
+		*/
 
 		var __createButton:XTextSpriteButton = this.m_createRoomButton = __hbox.addGameObjectAsChild (XTextSpriteButton, 0, 0.0, false) as XTextSpriteButton;
 		__createButton.afterSetup ([
