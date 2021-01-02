@@ -35,6 +35,7 @@ import { FlockLeader } from '../test/FlockLeader';
 export class CreateRoom extends DATState {
 	public m_statusMessage:XTextGameObject;
 	public m_createRoomButton:XTextSpriteButton;
+	public m_mainUI:HBox;
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -93,12 +94,18 @@ export class CreateRoom extends DATState {
 
 //------------------------------------------------------------------------------------------
 	public createRoom ():void {
-		var __settings:SFS2X.RoomSettings = new SFS2X.RoomSettings (GUID.create ().substring (1, 18));
+		var __roomID:string = GUID.create ().substring (1, 18);
+
+		var __settings:SFS2X.RoomSettings = new SFS2X.RoomSettings (__roomID);
 		__settings.maxUsers = 6;
 		__settings.groupId = "default";
 
 		SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_ADD, (e:SFS2X.SFSEvent) => {
 			console.log (": onRoomAdded: ", e);
+
+			this.m_mainUI.nukeLater ();
+
+			this.showRoomID (__roomID);
 		});
 
 		SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_CREATION_ERROR, (e:SFS2X.SFSEvent) => {
@@ -109,12 +116,37 @@ export class CreateRoom extends DATState {
 	}
 
 //------------------------------------------------------------------------------------------
+	public showRoomID (__roomID:string):void {
+		this.setStatusMessage ("Room ID: ");
+
+		var __hbox:HBox = this.addGameObjectAsChild (HBox, 0, 0.0, false) as HBox;
+		__hbox.afterSetup ([400, 100, XJustify.CENTER]);
+
+		var __roomIDText:any = new TextInput (
+			{
+				input: {
+					fontSize: '40px'
+				}, 
+				box: {fill: 0xc0c0c0},
+			}
+		);
+
+		__roomIDText.text = __roomID;
+
+		__hbox.addItem (__roomIDText);
+		__hbox.addSortableChild (__roomIDText, 0, 0.0, false);
+
+		this.horizontalPercent (__hbox, 0.50);
+		this.verticalPercent (__hbox, 0.50);
+	}
+
+//------------------------------------------------------------------------------------------
 	public setupUI ():void {
 		this.setStatusMessage ("Create Room");
 
 		var __ypercent:number = 0.50;
 
-		var __hbox:HBox = this.addGameObjectAsChild (HBox, 0, 0.0, false) as HBox;
+		var __hbox:HBox = this.m_mainUI = this.addGameObjectAsChild (HBox, 0, 0.0, false) as HBox;
 		__hbox.afterSetup ([400, 100, XJustify.SPACE_BETWEEN]);
 
 		var __vbox:VBox = __hbox.addGameObjectAsChild (VBox, 0, 0.0, false) as VBox;
