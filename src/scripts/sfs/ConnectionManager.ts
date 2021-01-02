@@ -14,6 +14,7 @@ import { XTaskSubManager} from '../../engine/task/XTaskSubManager';
 import { XWorld} from '../../engine/sprite/XWorld';
 import { XType } from '../../engine/type/XType';
 import { XGameObject} from '../../engine/gameobject/XGameObject';
+import { GUID } from '../../engine/utils/GUID';
 
 //------------------------------------------------------------------------------------------
 export class ConnectionManager extends XGameObject {
@@ -63,8 +64,6 @@ export class ConnectionManager extends XGameObject {
 
         this.m_connected = false;
         this.m_loggedinToZone = false;
-
-        this.Connect_Script ();
 
 		return this;
 	}
@@ -154,10 +153,6 @@ export class ConnectionManager extends XGameObject {
                                 SFSManager.instance ().isConnected ()
                             );
                         }, XTask.BNE, "loop",
-
-						() => {
-                            this.LoginToZone_Script ();
-                        },
 						
 					XTask.RETN,
 				]);	
@@ -180,7 +175,7 @@ export class ConnectionManager extends XGameObject {
     }
        
 	//------------------------------------------------------------------------------------------
-	public LoginToZone_Script ():void {
+	public LoginToZone_Script (__userName:string):void {
 
 		this.script.gotoTask ([
 				
@@ -195,7 +190,7 @@ export class ConnectionManager extends XGameObject {
                         () => {
                             console.log (": connected: ");
         
-                            SFSManager.instance ().send (new SFS2X.LoginRequest ("Guest#", "", null, "BasicExamples"));
+                            SFSManager.instance ().send (new SFS2X.LoginRequest (__userName + GUID.create (), "", null, "BasicExamples"));
 
                             SFSManager.instance ().once (SFS2X.SFSEvent.LOGIN, (e:SFS2X.SFSEvent) => {
 								console.log (": logged in: ", e);

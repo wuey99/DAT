@@ -13,7 +13,7 @@ import { XWorld} from '../../engine/sprite/XWorld';
 import { XType } from '../../engine/type/XType';
 import { XGameObject} from '../../engine/gameobject/XGameObject';
 import { XGameController } from '../../engine/state/XGameController';
-import { Startup } from './Startup';
+import { Login } from './Login';
 import { XSimpleXMLNode } from '../../engine/xml/XSimpleXMLNode';
 import { CreateRoom } from '../moderator/CreateRoom';
 import { JoinRoom } from '../player/JoinRoom';
@@ -37,7 +37,7 @@ export class DATGameController extends XGameController {
 	public afterSetup (__params:Array<any> = null):XGameObject {
 		super.afterSetup (__params);
 
-		this.getGameInstance ().registerState ("Startup", Startup);
+		this.getGameInstance ().registerState ("Login", Login);
 		this.getGameInstance ().registerState ("CreateRoom", CreateRoom);
 		this.getGameInstance ().registerState ("JoinRoom", JoinRoom);
 
@@ -73,7 +73,7 @@ export class DATGameController extends XGameController {
 				() => { 
 					this.m_XApp.getXProjectManager ().startAllResourceManagers ();
 
-					this.getGameInstance ().gotoState ("Startup");
+					this.getGameInstance ().gotoState ("Login");
 				},
 
 			XTask.RETN,

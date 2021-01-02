@@ -26,12 +26,16 @@ import { ConnectionManager } from '../sfs/ConnectionManager';
 import { XType } from '../../engine/type/XType';
 import { G } from '../../engine/app/G';
 import { DATState } from '../scene/DATState';
-import { FlockLeader } from '../test/FlockLeader';
+import { HBox } from '../../engine/ui/HBox';
+import { VBox } from '../../engine/ui/VBox';
+import { XJustify } from '../../engine/ui/XJustify';
 
 //------------------------------------------------------------------------------------------
-export class Startup extends DATState {
+export class Login extends DATState {
 	public m_statusMessage:XTextGameObject;
 	public script:XTask;
+	public m_nameTextInput:TextInput;
+	public m_loginButton:XTextSpriteButton;
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -85,7 +89,7 @@ export class Startup extends DATState {
 		);
 
 		this.horizontalPercent (this.m_statusMessage, 0.50);
-		this.verticalPercent (this.m_statusMessage, 0.50);
+		this.verticalPercent (this.m_statusMessage, 0.125);
 	}
 
 //------------------------------------------------------------------------------------------
@@ -109,6 +113,8 @@ export class Startup extends DATState {
 	public Connect_Script ():void {
 		this.setStatusMessage ("Connecting to Server...");
 
+		ConnectionManager.instance ().Connect_Script ();
+
 		this.script.gotoTask ([
 				
 			//------------------------------------------------------------------------------------------
@@ -126,7 +132,13 @@ export class Startup extends DATState {
 						}, XTask.BNE, "loop",
 
 						() => {
-							this.LoginToZone_Script ();
+							if (window.location.hash == "#moderator") {
+								this.setStatusMessage ("Login as Moderator");
+							} else {
+								this.setStatusMessage ("Login as Player");
+							}
+
+							this.setupUI ();
 						},
 
 					XTask.RETN,
@@ -149,9 +161,84 @@ export class Startup extends DATState {
 	//------------------------------------------------------------------------------------------
 	}
 
+//------------------------------------------------------------------------------------------
+	public setupUI ():void {
+		var __ypercent:number = 0.50;
+
+		var __hbox:HBox = this.addGameObjectAsChild (HBox, 0, 0.0, false) as HBox;
+		__hbox.afterSetup ([1000, 100, XJustify.SPACE_BETWEEN]);
+
+		var __vbox:VBox = __hbox.addGameObjectAsChild (VBox, 0, 0.0, false) as VBox;
+		__vbox.afterSetup ([250, 60, XJustify.CENTER]);
+
+		var __roomLabel:XTextSprite = this.createXTextSprite (
+			-1,
+			-1,
+			"Enter your name:",
+			"Nunito",
+			25,
+			0x000000,
+			true,
+			"center", "center"
+		);
+
+		__vbox.addItem (__roomLabel);
+		__vbox.addSortableChild (__roomLabel, 0, 0.0, false);
+		
+		__hbox.addItem (__vbox);
+		__hbox.addSortableChild (__vbox, 0, 0.0, false);
+
+		var __vboxTextInput:VBox = __hbox.addGameObjectAsChild (VBox, 0, 0.0, false) as VBox;
+		__vboxTextInput.afterSetup ([250, 60, XJustify.CENTER]);
+
+		var __textInput:TextInput = this.m_nameTextInput = new TextInput (
+			{
+				input: {fontSize: '25px'}, 
+				box: {fill: 0xc0c0c0},
+			}
+		);
+		__vboxTextInput.addItem (__textInput);
+		__vboxTextInput.addSortableChild (__textInput, 0, 0.0, false);
+
+		__hbox.addItem (__vboxTextInput);
+		__hbox.addSortableChild (__vboxTextInput, 0, 0.0, false);
+
+		var __loginButton:XTextSpriteButton = this.m_loginButton = __hbox.addGameObjectAsChild (XTextSpriteButton, 0, 0.0, false) as XTextSpriteButton;
+		__loginButton.afterSetup ([
+			"StandardButton",
+			true, 10, 150, 60,
+			"LOG IN",
+			"Nunito",
+			25,
+			0x000000,
+			0x000000,
+			0x000000,
+			0x000000,
+			0x000000,
+			false,
+			"center", "center"
+		]);
+		__hbox.addItem (__loginButton);
+
+		this.horizontalPercent (__hbox, 0.50);
+		this.verticalPercent (__hbox, __ypercent);
+
+		__loginButton.addMouseUpListener (() => {
+			var __userName:string = "";
+
+			console.log (": login: ", __userName);
+
+			this.LoginToZone_Script (__userName);
+
+			__hbox.nukeLater ();
+		});
+	}
+
 	//------------------------------------------------------------------------------------------
-	public LoginToZone_Script ():void {
+	public LoginToZone_Script (__userName:string):void {
 		this.setStatusMessage ("Logging into Zone...");
+
+		ConnectionManager.instance ().LoginToZone_Script (__userName);
 
 		this.script.gotoTask ([
 				
@@ -170,7 +257,7 @@ export class Startup extends DATState {
 						}, XTask.BNE, "loop",
 
 						() => {
-							this.Connected_Script ();
+							this.LoggedIn_Script ();
 						},
 
 					XTask.RETN,
@@ -194,7 +281,7 @@ export class Startup extends DATState {
 	}
 	
 	//------------------------------------------------------------------------------------------
-	public Connected_Script ():void {
+	public LoggedIn_Script ():void {
 		this.setStatusMessage ("Logged in!");
 
 		this.script.gotoTask ([

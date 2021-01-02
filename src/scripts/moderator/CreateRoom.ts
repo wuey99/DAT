@@ -20,6 +20,7 @@ import { XSpriteButton } from '../../engine/ui/XSpriteButton';
 import { XTextButton } from '../../engine/ui/XTextButton';
 import { XTextSpriteButton } from '../../engine/ui/XTextSpriteButton';
 import { XTextSprite } from '../../engine/sprite/XTextSprite';
+import { XTextGameObject } from '../../engine/ui/XTextGameObject';
 import { TextInput } from 'pixi-textinput-v5';
 import { ConnectionManager } from '../sfs/ConnectionManager';
 import { XType } from '../../engine/type/XType';
@@ -32,7 +33,7 @@ import { FlockLeader } from '../test/FlockLeader';
 
 //------------------------------------------------------------------------------------------
 export class CreateRoom extends DATState {
-	public m_roomTextInput:TextInput;
+	public m_statusMessage:XTextGameObject;
 	public m_createRoomButton:XTextSpriteButton;
 
 //------------------------------------------------------------------------------------------	
@@ -51,19 +52,9 @@ export class CreateRoom extends DATState {
 	public afterSetup (__params:Array<any> = null):XGameObject {
         super.afterSetup (__params);
 	
+		this.createStatusMessage ();
+
 		this.setupUI ();
-
-		/*
-		this.m_roomTextInput.on ("keydown", (e:any) => {
-			console.log (": event: ", e, this.m_roomTextInput.text);
-		});
-		*/
-
-		this.m_createRoomButton.addMouseUpListener (() => {
-			console.log (": mouse up: ");
-
-			this.createRoom ();
-		});
 
 		return this;
 	}
@@ -73,6 +64,33 @@ export class CreateRoom extends DATState {
         super.cleanup ();
 	}
 	
+//------------------------------------------------------------------------------------------
+	public createStatusMessage ():void {
+		this.m_statusMessage = this.addGameObjectAsChild (XTextGameObject, 0, 0.0) as XTextGameObject;
+		this.m_statusMessage.afterSetup ([]);
+
+		this.m_statusMessage.setupText (
+			-1,
+			64,
+			"",
+			"Nunito",
+			75,
+			0x0000ff,
+			true,
+			"center", "center"
+		);
+
+		this.horizontalPercent (this.m_statusMessage, 0.50);
+		this.verticalPercent (this.m_statusMessage, 0.125);
+	}
+
+	//------------------------------------------------------------------------------------------
+	public setStatusMessage (__text:string):void {
+		this.m_statusMessage.text = __text;
+
+		this.horizontalPercent (this.m_statusMessage, 0.50);
+	}
+
 //------------------------------------------------------------------------------------------
 	public createRoom ():void {
 		var __settings:SFS2X.RoomSettings = new SFS2X.RoomSettings (GUID.create ().substring (1, 18));
@@ -92,7 +110,9 @@ export class CreateRoom extends DATState {
 
 //------------------------------------------------------------------------------------------
 	public setupUI ():void {
-		var __ypercent:number = 0.25;
+		this.setStatusMessage ("Create Room");
+
+		var __ypercent:number = 0.50;
 
 		var __hbox:HBox = this.addGameObjectAsChild (HBox, 0, 0.0, false) as HBox;
 		__hbox.afterSetup ([400, 100, XJustify.SPACE_BETWEEN]);
@@ -103,7 +123,7 @@ export class CreateRoom extends DATState {
 		var __roomLabel:XTextSprite = this.createXTextSprite (
 			-1,
 			-1,
-			"Create a new Game",
+			"Create a new Room",
 			"Nunito",
 			25,
 			0x000000,
@@ -116,17 +136,6 @@ export class CreateRoom extends DATState {
 		
 		__hbox.addItem (__vbox);
 		__hbox.addSortableChild (__vbox, 0, 0.0, false);
-
-		/*
-		var __textInput:TextInput = this.m_roomTextInput = new TextInput (
-			{
-				input: {fontSize: '25px'}, 
-				box: {fill: 0xc0c0c0},
-			}
-		);
-		__hbox.addItem (__textInput);
-		__hbox.addSortableChild (__textInput, 0, 0.0, false);
-		*/
 
 		var __createButton:XTextSpriteButton = this.m_createRoomButton = __hbox.addGameObjectAsChild (XTextSpriteButton, 0, 0.0, false) as XTextSpriteButton;
 		__createButton.afterSetup ([
@@ -147,6 +156,14 @@ export class CreateRoom extends DATState {
 
 		this.horizontalPercent (__hbox, 0.50);
 		this.verticalPercent (__hbox, __ypercent);
+
+		this.m_createRoomButton.addMouseUpListener (() => {
+			console.log (": mouse up: ");
+
+			this.m_createRoomButton.setDisabled (true);
+
+			this.createRoom ();
+		});
 	}
 
 //------------------------------------------------------------------------------------------
