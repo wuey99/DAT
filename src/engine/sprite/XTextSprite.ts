@@ -78,6 +78,8 @@ import { XType } from '../type/XType';
 
 //------------------------------------------------------------------------------------------
 		public format ():void {
+			this.m_bitmapText.dirty = true;
+			
 			if (this.m_width > 0) switch (this.m_horizontalAlignment) {
 				case "center":
 					this.m_bitmapText.x = (this.m_width - this.m_bitmapText.width) / 2;

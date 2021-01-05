@@ -42,34 +42,34 @@ export class XTextButton extends XButton {
 	}
 
 //------------------------------------------------------------------------------------------
-public createHighlightTask ():void {
-    this.addTask ([
-        XTask.LABEL, "loop",
-            XTask.WAIT, 0x0100,
-                
-            () => {
-                switch (this.m_label) {
-                    case XButton.NORMAL_STATE:
-                        (this.m_sprite as XTextSprite).color = this.m_colorNormal;
-                        break;
-                    case XButton.OVER_STATE:
-                        (this.m_sprite as XTextSprite).color = this.m_colorOver;
-                        break;
-                    case XButton.DOWN_STATE:
-                        (this.m_sprite as XTextSprite).color = this.m_colorDown;
-                        break;
-                    case XButton.SELECTED_STATE:
-                        (this.m_sprite as XTextSprite).color = this.m_colorSelected;
-                        break;
-                    case XButton.DISABLED_STATE:
-                        (this.m_sprite as XTextSprite).color = this.m_colorDisabled;
-                        break;
-                }
-            },
-                                
-        XTask.GOTO, "loop",
-    ]);
-}
+    public createHighlightTask ():void {
+        this.addTask ([
+            XTask.LABEL, "loop",
+                XTask.WAIT, 0x0100,
+                    
+                () => {
+                    switch (this.m_label) {
+                        case XButton.NORMAL_STATE:
+                            (this.m_sprite as XTextSprite).color = this.m_colorNormal;
+                            break;
+                        case XButton.OVER_STATE:
+                            (this.m_sprite as XTextSprite).color = this.m_colorOver;
+                            break;
+                        case XButton.DOWN_STATE:
+                            (this.m_sprite as XTextSprite).color = this.m_colorDown;
+                            break;
+                        case XButton.SELECTED_STATE:
+                            (this.m_sprite as XTextSprite).color = this.m_colorSelected;
+                            break;
+                        case XButton.DISABLED_STATE:
+                            (this.m_sprite as XTextSprite).color = this.m_colorDisabled;
+                            break;
+                    }
+                },
+                                    
+            XTask.GOTO, "loop",
+        ]);
+    }
 
 //------------------------------------------------------------------------------------------
     public get width ():number {

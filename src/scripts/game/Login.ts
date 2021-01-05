@@ -224,8 +224,8 @@ export class Login extends DATState {
 		this.verticalPercent (__hbox, __ypercent);
 
 		__loginButton.addMouseUpListener (() => {
-			var __userName:string = "";
-
+			var __userName:string = (__textInput as any).text;
+			
 			console.log (": login: ", __userName);
 
 			this.LoginToZone_Script (__userName);

@@ -57,6 +57,10 @@ export class CreateRoom extends DATState {
 
 		this.setupUI ();
 
+		SFSManager.instance ().addEventListener (SFS2X.SFSEvent.USER_ENTER_ROOM, (e:SFS2X.SFSEvent) => {
+			console.log (": userEnteredRoom: ", e);
+		});
+
 		return this;
 	}
 
@@ -106,6 +110,12 @@ export class CreateRoom extends DATState {
 			this.m_mainUI.nukeLater ();
 
 			this.showRoomID (__roomID);
+
+			SFSManager.instance ().send (new SFS2X.JoinRoomRequest (__roomID));
+
+			SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_JOIN, (e:SFS2X.SFSEvent) => {
+				console.log (": moderator joined Room: ", e);
+			});
 		});
 
 		SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_CREATION_ERROR, (e:SFS2X.SFSEvent) => {

@@ -34,6 +34,7 @@ export class JoinRoom extends DATState {
 	public m_statusMessage:XTextGameObject;
 	public m_roomTextInput:TextInput;
 	public m_joinRoomButton:XTextSpriteButton;
+	public script:XTask;
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -51,9 +52,13 @@ export class JoinRoom extends DATState {
 	public afterSetup (__params:Array<any> = null):XGameObject {
         super.afterSetup (__params);
 	
+		this.script = this.addEmptyTask ();
+
 		this.createStatusMessage ();
 
 		this.setupUI ();
+
+		this.Idle_Script ();
 
 		return this;
 	}
@@ -92,7 +97,7 @@ export class JoinRoom extends DATState {
 
 //------------------------------------------------------------------------------------------
 	public setupUI ():void {
-		this.setStatusMessage ("Please enter Room ID provided by your Moderator");
+		this.setStatusMessage ("Please enter Room ID");
 
 		var __ypercent:number = 0.50;
 
@@ -122,7 +127,7 @@ export class JoinRoom extends DATState {
 		var __vboxTextInput:VBox = __hbox.addGameObjectAsChild (VBox, 0, 0.0, false) as VBox;
 		__vboxTextInput.afterSetup ([250, 60, XJustify.CENTER]);
 
-		var __textInput:TextInput = this.m_roomTextInput = new TextInput (
+		var __textInput:any = this.m_roomTextInput = new TextInput (
 			{
 				input: {fontSize: '25px'}, 
 				box: {fill: 0xc0c0c0},
@@ -153,6 +158,88 @@ export class JoinRoom extends DATState {
 
 		this.horizontalPercent (__hbox, 0.50);
 		this.verticalPercent (__hbox, __ypercent)
+
+		__joinButton.addMouseUpListener (() => {
+			console.log (": roomID: ", __textInput.text);
+
+			this.Join_Script (__textInput.text);
+		});
+	}
+
+	//------------------------------------------------------------------------------------------
+	public Idle_Script ():void {
+		this.script.gotoTask ([
+				
+			//------------------------------------------------------------------------------------------
+			// control
+			//------------------------------------------------------------------------------------------
+			() => {
+				this.script.addTask ([
+					XTask.WAIT1000, 1 * 1000,
+
+					XTask.LABEL, "loop",
+						XTask.WAIT, 0x0100,
+
+					XTask.RETN,
+				]);	
+			},
+				
+			//------------------------------------------------------------------------------------------
+			// animation
+			//------------------------------------------------------------------------------------------	
+			XTask.LABEL, "loop",
+                XTask.WAIT, 0x0100,
+					
+				XTask.GOTO, "loop",
+				
+			XTask.RETN,
+				
+			//------------------------------------------------------------------------------------------			
+		]);
+			
+	//------------------------------------------------------------------------------------------
+	}
+
+	//------------------------------------------------------------------------------------------
+	public Join_Script (__roomID:string):void {
+		this.setStatusMessage ("Joining Room...");
+
+		SFSManager.instance ().send (new SFS2X.JoinRoomRequest (__roomID));
+
+		SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_JOIN, (e:SFS2X.SFSEvent) => {
+			console.log (": joined Room: ", e);
+		});
+		
+		this.script.gotoTask ([
+				
+			//------------------------------------------------------------------------------------------
+			// control
+			//------------------------------------------------------------------------------------------
+			() => {
+				this.script.addTask ([
+					XTask.WAIT1000, 1 * 1000,
+
+					XTask.LABEL, "loop",
+						XTask.WAIT, 0x0100,
+
+					XTask.RETN,
+				]);	
+			},
+				
+			//------------------------------------------------------------------------------------------
+			// animation
+			//------------------------------------------------------------------------------------------	
+			XTask.LABEL, "loop",
+                XTask.WAIT, 0x0100,
+					
+				XTask.GOTO, "loop",
+				
+			XTask.RETN,
+				
+			//------------------------------------------------------------------------------------------			
+		]);
+			
+	//------------------------------------------------------------------------------------------
 	}
 
 //------------------------------------------------------------------------------------------
