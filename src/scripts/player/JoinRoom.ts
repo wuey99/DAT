@@ -211,14 +211,8 @@ export class JoinRoom extends DATState {
 
 		this.m_mainUI.hide ();
 
-		SFSManager.instance ().send (new SFS2X.JoinRoomRequest (__roomID));
+		ConnectionManager.instance ().JoinRoom_Script (__roomID);
 
-		SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_JOIN, (e:SFS2X.SFSEvent) => {
-			console.log (": joined Room: ", e);
-
-			__joinedFlag = true;
-		});
-		
 		this.script.gotoTask ([
 				
 			//------------------------------------------------------------------------------------------
@@ -232,7 +226,7 @@ export class JoinRoom extends DATState {
 						XTask.WAIT, 0x0100,
 
 						XTask.FLAGS, (__task:XTask) => {
-							__task.ifTrue (__joinedFlag);
+							__task.ifTrue (ConnectionManager.instance ().isJoinedRoom ());
 						}, XTask.BNE, "loop",
 
 						() => {

@@ -24,13 +24,20 @@ export class ConnectionManager extends XGameObject {
 
     public m_connected:boolean;
 	public m_loggedinToZone:boolean;
+	public m_joinedRoom:boolean;
 	
 	public m_connectedSignal:XSignal;
     public m_disconnectedSignal:XSignal;
 	public m_loggedInToZoneSignal:XSignal;
     public m_loggedOutOfZoneSignal:XSignal;
     public m_errorSignal:XSignal;
-    
+	
+	public m_roomID:string;
+
+	public m_sfsRoom:SFS2X.SFSRoom;
+	public m_sfsRoomManager:SFS2X.SFSRoomManager;
+	public m_sfsUserManager:SFS2X.SFSUserManager;
+
 //------------------------------------------------------------------------------------------
     public static instance ():ConnectionManager {
         return ConnectionManager.self;
@@ -63,7 +70,8 @@ export class ConnectionManager extends XGameObject {
         this.script = this.addEmptyTask ();
 
         this.m_connected = false;
-        this.m_loggedinToZone = false;
+		this.m_loggedinToZone = false;
+		this.m_joinedRoom = false;
 
 		return this;
 	}
@@ -107,6 +115,11 @@ export class ConnectionManager extends XGameObject {
 	//------------------------------------------------------------------------------------------
 	public isLoggedIntoZone ():boolean {
 		return this.m_loggedinToZone;
+	}
+
+	//------------------------------------------------------------------------------------------
+	public isJoinedRoom ():boolean {
+		return this.m_joinedRoom;
 	}
 
 	//------------------------------------------------------------------------------------------
@@ -188,8 +201,6 @@ export class ConnectionManager extends XGameObject {
 						XTask.WAIT, 0x0100,
                         
                         () => {
-                            console.log (": connected: ");
-        
                             SFSManager.instance ().send (new SFS2X.LoginRequest (__userName + GUID.create (), "", null, "BasicExamples"));
 
                             SFSManager.instance ().once (SFS2X.SFSEvent.LOGIN, (e:SFS2X.SFSEvent) => {
@@ -235,5 +246,59 @@ export class ConnectionManager extends XGameObject {
 	//------------------------------------------------------------------------------------------
     }
 
+	//------------------------------------------------------------------------------------------
+	public JoinRoom_Script (__roomID:string):void {
+		this.m_roomID = __roomID;
+	
+		this.script.gotoTask ([
+				
+			//------------------------------------------------------------------------------------------
+			// control
+			//------------------------------------------------------------------------------------------
+			() => {
+				this.script.addTask ([
+					XTask.LABEL, "loop",
+						XTask.WAIT, 0x0100,
+                        
+                        () => {
+							SFSManager.instance ().send (new SFS2X.JoinRoomRequest (__roomID));
+
+							SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_JOIN, (e:SFS2X.SFSEvent) => {
+								var __sfsRoom:SFS2X.SFSRoom = this.m_sfsRoom = e.room as SFS2X.SFSRoom;
+
+								console.log (": joined Room: ", __sfsRoom);
+					
+								this.m_joinedRoom = true;
+							});
+							
+							SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_JOIN_ERROR, (e:SFS2X.SFSEvent) => {
+								console.log (": join room error: ", e);
+
+								this.m_joinedRoom = false;
+
+								this.m_errorSignal.fireSignal ();
+							});
+                        },
+        
+					XTask.RETN,
+				]);	
+			},
+				
+			//------------------------------------------------------------------------------------------
+			// animation
+			//------------------------------------------------------------------------------------------	
+			XTask.LABEL, "loop",
+                XTask.WAIT, 0x0100,
+					
+				XTask.GOTO, "loop",
+				
+			XTask.RETN,
+				
+			//------------------------------------------------------------------------------------------			
+		]);
+			
+	//------------------------------------------------------------------------------------------
+	}
+	
 //------------------------------------------------------------------------------------------
 }

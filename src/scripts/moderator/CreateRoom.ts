@@ -111,11 +111,7 @@ export class CreateRoom extends DATState {
 
 			this.showRoomID (__roomID);
 
-			SFSManager.instance ().send (new SFS2X.JoinRoomRequest (__roomID));
-
-			SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_JOIN, (e:SFS2X.SFSEvent) => {
-				console.log (": moderator joined Room: ", e);
-			});
+			ConnectionManager.instance ().JoinRoom_Script (__roomID);
 		});
 
 		SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_CREATION_ERROR, (e:SFS2X.SFSEvent) => {
