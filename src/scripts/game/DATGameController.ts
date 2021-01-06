@@ -17,6 +17,7 @@ import { Login } from './Login';
 import { XSimpleXMLNode } from '../../engine/xml/XSimpleXMLNode';
 import { CreateRoom } from '../moderator/CreateRoom';
 import { JoinRoom } from '../player/JoinRoom';
+import { DATGameInstance } from './DATGameInstance';
 
 //------------------------------------------------------------------------------------------
 export class DATGameController extends XGameController {
@@ -86,6 +87,11 @@ export class DATGameController extends XGameController {
 	public cleanup ():void {
         super.cleanup ();
     }
-    
+	
+//------------------------------------------------------------------------------------------
+	public getGameInstanceClass ():any {
+		return DATGameInstance;
+	}
+
 //------------------------------------------------------------------------------------------
 }

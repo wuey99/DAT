@@ -35,6 +35,7 @@ export class JoinRoom extends DATState {
 	public m_roomTextInput:TextInput;
 	public m_joinRoomButton:XTextSpriteButton;
 	public script:XTask;
+	public m_mainUI:HBox;
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -101,7 +102,7 @@ export class JoinRoom extends DATState {
 
 		var __ypercent:number = 0.50;
 
-		var __hbox:HBox = this.addGameObjectAsChild (HBox, 0, 0.0, false) as HBox;
+		var __hbox:HBox = this.m_mainUI = this.addGameObjectAsChild (HBox, 0, 0.0, false) as HBox;
 		__hbox.afterSetup ([1000, 100, XJustify.SPACE_BETWEEN]);
 
 		var __vbox:VBox = __hbox.addGameObjectAsChild (VBox, 0, 0.0, false) as VBox;
@@ -202,14 +203,66 @@ export class JoinRoom extends DATState {
 
 	//------------------------------------------------------------------------------------------
 	public Join_Script (__roomID:string):void {
+		var __joinedFlag:boolean = false;
+
 		this.setStatusMessage ("Joining Room...");
+
+		this.verticalPercent (this.m_statusMessage, 0.50);
+
+		this.m_mainUI.hide ();
 
 		SFSManager.instance ().send (new SFS2X.JoinRoomRequest (__roomID));
 
 		SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_JOIN, (e:SFS2X.SFSEvent) => {
 			console.log (": joined Room: ", e);
+
+			__joinedFlag = true;
 		});
 		
+		this.script.gotoTask ([
+				
+			//------------------------------------------------------------------------------------------
+			// control
+			//------------------------------------------------------------------------------------------
+			() => {
+				this.script.addTask ([
+					XTask.WAIT1000, 1 * 1000,
+
+					XTask.LABEL, "loop",
+						XTask.WAIT, 0x0100,
+
+						XTask.FLAGS, (__task:XTask) => {
+							__task.ifTrue (__joinedFlag);
+						}, XTask.BNE, "loop",
+
+						() => {
+							this.Joined_Script ();
+						},
+
+					XTask.RETN,
+				]);	
+			},
+				
+			//------------------------------------------------------------------------------------------
+			// animation
+			//------------------------------------------------------------------------------------------	
+			XTask.LABEL, "loop",
+                XTask.WAIT, 0x0100,
+					
+				XTask.GOTO, "loop",
+				
+			XTask.RETN,
+				
+			//------------------------------------------------------------------------------------------			
+		]);
+			
+	//------------------------------------------------------------------------------------------
+	}
+
+	//------------------------------------------------------------------------------------------
+	public Joined_Script ():void {
+		this.setStatusMessage ("Joined Room!");
+
 		this.script.gotoTask ([
 				
 			//------------------------------------------------------------------------------------------
