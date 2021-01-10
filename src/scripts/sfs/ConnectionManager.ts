@@ -15,6 +15,7 @@ import { XWorld} from '../../engine/sprite/XWorld';
 import { XType } from '../../engine/type/XType';
 import { XGameObject} from '../../engine/gameobject/XGameObject';
 import { GUID } from '../../engine/utils/GUID';
+import { MessagingManager } from './MessagingManager';
 
 //------------------------------------------------------------------------------------------
 export class ConnectionManager extends XGameObject {
@@ -65,8 +66,8 @@ export class ConnectionManager extends XGameObject {
 		this.m_disconnectedSignal = this.createXSignal ();
 		this.m_loggedInToZoneSignal = this.createXSignal ();
         this.m_loggedOutOfZoneSignal = this.createXSignal ();
-        this.m_errorSignal = this.createXSignal ();
-
+		this.m_errorSignal = this.createXSignal ();
+		
         this.script = this.addEmptyTask ();
 
         this.m_connected = false;
@@ -84,7 +85,7 @@ export class ConnectionManager extends XGameObject {
 		this.m_disconnectedSignal.removeAllListeners ();
 		this.m_loggedInToZoneSignal.removeAllListeners ();
         this.m_loggedOutOfZoneSignal.removeAllListeners ();
-        this.m_errorSignal.removeAllListeners ();
+		this.m_errorSignal.removeAllListeners ();
 	}
 
 	//------------------------------------------------------------------------------------------
@@ -123,7 +124,7 @@ export class ConnectionManager extends XGameObject {
 	}
 
 	//------------------------------------------------------------------------------------------
-	public Connect_Script ():void {
+	public Connect_Script (__errorCallback:any):void {
 		this.script.gotoTask ([
 				
 			//------------------------------------------------------------------------------------------
@@ -146,6 +147,8 @@ export class ConnectionManager extends XGameObject {
                             () => {
                                 console.log (": ----------------->: connection error: ");
 
+								__errorCallback ();
+
                                 this.m_errorSignal.fireSignal ();
                             },
 							(e:SFS2X.SFSEvent) => {
@@ -167,6 +170,10 @@ export class ConnectionManager extends XGameObject {
                             );
                         }, XTask.BNE, "loop",
 						
+						() => {
+							MessagingManager.instance ().setup ();
+						},
+
 					XTask.RETN,
 				]);	
 			},
@@ -185,10 +192,10 @@ export class ConnectionManager extends XGameObject {
 		]);
 			
 	//------------------------------------------------------------------------------------------
-    }
-       
+	}
+	
 	//------------------------------------------------------------------------------------------
-	public LoginToZone_Script (__userName:string):void {
+	public LoginToZone_Script ( __role:string, __userName:string, __errorCallback:any):void {
 
 		this.script.gotoTask ([
 				
@@ -201,7 +208,7 @@ export class ConnectionManager extends XGameObject {
 						XTask.WAIT, 0x0100,
                         
                         () => {
-                            SFSManager.instance ().send (new SFS2X.LoginRequest (__userName + GUID.create (), "", null, "BasicExamples"));
+                            SFSManager.instance ().send (new SFS2X.LoginRequest (__role + ":" + __userName + GUID.create (), "", null, "BasicExamples"));
 
                             SFSManager.instance ().once (SFS2X.SFSEvent.LOGIN, (e:SFS2X.SFSEvent) => {
 								console.log (": logged in: ", e);
@@ -213,6 +220,8 @@ export class ConnectionManager extends XGameObject {
 
                             SFSManager.instance ().once (SFS2X.LOGIN_ERROR, (e:SFS2X.SFSEvent) => {
                                 console.log (": login error: ", e);
+
+								__errorCallback (e);
 
                                 this.m_errorSignal.fireSignal ();
                             });

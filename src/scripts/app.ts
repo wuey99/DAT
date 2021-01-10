@@ -87,7 +87,7 @@ export class Main {
 
         this.configureAndLoadAssets ();
 
-        this.m_delay = 0;
+        this.m_delay = 1;
 
         this.reset ();
     }
