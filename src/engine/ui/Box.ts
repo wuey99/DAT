@@ -77,6 +77,38 @@ export class Box extends XGameObject {
     }
 
 //------------------------------------------------------------------------------------------
+    public removeItem (__item:PIXI.Sprite | TextInput):void {
+        var __index:number = this.m_items.indexOf (__item);
+
+        if (__index >= 0) {
+            if (this.m_childSprites.has (__item)) {
+                this.removeChildSprite (__item);
+            }
+
+            if (this.m_childObjects.has (__item as XGameObject)) {
+                this.removeChildObject (__item as XGameObject);
+            }
+
+            this.m_items.splice (__index, 1);
+        }
+    }
+
+//------------------------------------------------------------------------------------------
+    public removeAllItems ():void {
+        var __itemsToDelete:Array<PIXI.Sprite | TextInput> = new Array<PIXI.Sprite | TextInput> ();
+
+        var i:number;
+
+        for (i = 0; i < this.m_items.length; i++) {
+            __itemsToDelete.push (this.m_items[i]);
+        }
+
+        for (i = 0; i < __itemsToDelete.length; i++) {
+           this.removeItem (__itemsToDelete[i]);
+        }
+    }
+
+//------------------------------------------------------------------------------------------
     public reorder ():void {
     }
 

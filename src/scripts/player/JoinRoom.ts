@@ -205,9 +205,7 @@ export class JoinRoom extends DATState {
 	public Join_Script (__roomID:string):void {
 		var __joinedFlag:boolean = false;
 
-		this.setStatusMessage ("Joining Room...");
-
-		this.verticalPercent (this.m_statusMessage, 0.50);
+		this.setStatusMessage ("Joining room...");
 
 		this.m_mainUI.hide ();
 
@@ -255,8 +253,27 @@ export class JoinRoom extends DATState {
 
 	//------------------------------------------------------------------------------------------
 	public Joined_Script ():void {
-		this.setStatusMessage ("Joined Room!");
+		this.setStatusMessage ("Successfully joined room!");
 
+		//------------------------------------------------------------------------------------------
+		var __waitMessage = this.addGameObjectAsChild (XTextGameObject, 0, 0.0) as XTextGameObject;
+		__waitMessage.afterSetup ([]);
+
+		__waitMessage.setupText (
+			-1,
+			64,
+			"Waiting for others to join...",
+			"Nunito",
+			30,
+			0x000000,
+			true,
+			"center", "center"
+		);
+
+		this.horizontalPercent (__waitMessage, 0.50);
+		this.verticalPercent (__waitMessage, 0.50);
+
+		//------------------------------------------------------------------------------------------
 		this.script.gotoTask ([
 				
 			//------------------------------------------------------------------------------------------

@@ -37,6 +37,8 @@ export class ConnectionManager extends XGameObject {
 
 	public m_sfsRoom:SFS2X.SFSRoom;
 	public m_sfsRoomManager:SFS2X.SFSRoomManager;
+
+	public m_sfsUser:SFS2X.SFSUser;
 	public m_sfsUserManager:SFS2X.SFSUserManager;
 
 //------------------------------------------------------------------------------------------
@@ -119,6 +121,11 @@ export class ConnectionManager extends XGameObject {
 	}
 
 	//------------------------------------------------------------------------------------------
+	public getSFSUserManager ():SFS2X.SFSUserManager {
+		return this.m_sfsUserManager;
+	}
+
+	//------------------------------------------------------------------------------------------
 	public isJoinedRoom ():boolean {
 		return this.m_joinedRoom;
 	}
@@ -169,10 +176,6 @@ export class ConnectionManager extends XGameObject {
                                 SFSManager.instance ().isConnected ()
                             );
                         }, XTask.BNE, "loop",
-						
-						() => {
-							MessagingManager.instance ().setup ();
-						},
 
 					XTask.RETN,
 				]);	
@@ -208,10 +211,15 @@ export class ConnectionManager extends XGameObject {
 						XTask.WAIT, 0x0100,
                         
                         () => {
-                            SFSManager.instance ().send (new SFS2X.LoginRequest (__role + ":" + __userName + GUID.create (), "", null, "BasicExamples"));
+                            SFSManager.instance ().send (new SFS2X.LoginRequest (__role + ":" + __userName + ":" + GUID.create (), "", null, "BasicExamples"));
 
                             SFSManager.instance ().once (SFS2X.SFSEvent.LOGIN, (e:SFS2X.SFSEvent) => {
-								console.log (": logged in: ", e);
+								this.m_sfsUser = e.user;
+								this.m_sfsUserManager = this.m_sfsUser.getUserManager ();
+					
+								MessagingManager.instance ().setup (this.m_sfsUser);
+
+								console.log (": logged in: ", e, this.m_sfsUser);
 								
                                 this.m_loggedinToZone = true;
                                 

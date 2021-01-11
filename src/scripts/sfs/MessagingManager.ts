@@ -7,11 +7,22 @@ import { XSignal } from '../../engine/signals/XSignal';
 	export class MessagingManager {	
         public static self:MessagingManager;
 
+        public m_sfsRoom:SFS2X.SFSRoom;
+        public m_sfsRoomManager:SFS2X.SFSRoomManager;
+
+        public m_sfsUser:SFS2X.SFSUser;
+        public m_sfsUserManager:SFS2X.SFSUserManager;
+    
         public m_readySignal:XSignal;
         public m_completeSignal:XSignal;
         public m_triggerSignal:XSignal;
         public m_screenChangeSignal:XSignal;
         
+        public static READY_SIGNAL:string = "ready";
+        public static COMPLETE_SIGNAL:string = "complete";
+        public static TRIGGER_SIGNAL:string = "trigger";
+        public static SCREENCHANGE_SIGNAL:string = "screen-change";
+
     //------------------------------------------------------------------------------------------
         public static instance ():MessagingManager {
             if (MessagingManager.self == null) {
@@ -27,7 +38,10 @@ import { XSignal } from '../../engine/signals/XSignal';
         }
 
     //------------------------------------------------------------------------------------------
-        public setup ():void {
+        public setup (__sfsUser:SFS2X.SFSUser):void {
+            this.m_sfsUser = __sfsUser;
+            this.m_sfsUserManager = __sfsUser.getUserManager ();
+
             this.m_readySignal = new XSignal ();
             this.m_completeSignal = new XSignal ();
             this.m_triggerSignal = new XSignal ();
@@ -47,6 +61,23 @@ import { XSignal } from '../../engine/signals/XSignal';
 	//------------------------------------------------------------------------------------------
         public onPrivateMessage (e:SFS2X.SFSEvent):void {
             console.log (": onPrivateMessage: ", e);
+        }
+
+    //------------------------------------------------------------------------------------------
+        public fireReadySignal ():void {
+        }
+
+    //------------------------------------------------------------------------------------------
+        public fireCompleteSignal ():void {
+        }
+
+    //------------------------------------------------------------------------------------------
+        public fireTriggerSignal ():void {
+        }
+
+    //------------------------------------------------------------------------------------------
+        public fireScreenChangeSignal (__id:number):void {
+            SFSManager.instance ().send (new SFS2X.PrivateMessageRequest (MessagingManager.SCREENCHANGE_SIGNAL, __id));
         }
 
 	//------------------------------------------------------------------------------------------

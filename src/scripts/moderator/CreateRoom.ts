@@ -29,13 +29,17 @@ import { DATState } from '../scene/DATState';
 import { HBox } from '../../engine/ui/HBox';
 import { VBox } from '../../engine/ui/VBox';
 import { XJustify } from '../../engine/ui/XJustify';
+import { Spacer } from '../../engine/ui/Spacer';
 import { FlockLeader } from '../test/FlockLeader';
 
 //------------------------------------------------------------------------------------------
 export class CreateRoom extends DATState {
 	public m_statusMessage:XTextGameObject;
 	public m_createRoomButton:XTextSpriteButton;
-	public m_mainUI:HBox;
+	public script:XTask;
+	public m_createRoomLayout:HBox;
+	public m_waitJoinLayout:HBox;
+	public m_joinedUsersLayout:VBox;
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -53,9 +57,13 @@ export class CreateRoom extends DATState {
 	public afterSetup (__params:Array<any> = null):XGameObject {
         super.afterSetup (__params);
 	
+		this.script = this.addEmptyTask ();
+
 		this.createStatusMessage ();
 
-		this.setupUI ();
+		this.setupCreateRoomUI ();
+
+		this.Idle_Script ();
 
 		SFSManager.instance ().addEventListener (SFS2X.SFSEvent.USER_ENTER_ROOM, (e:SFS2X.SFSEvent) => {
 			console.log (": userEnteredRoom: ", e);
@@ -97,31 +105,6 @@ export class CreateRoom extends DATState {
 	}
 
 //------------------------------------------------------------------------------------------
-	public createRoom ():void {
-		var __roomID:string = GUID.create ().substring (1, 18);
-
-		var __settings:SFS2X.RoomSettings = new SFS2X.RoomSettings (__roomID);
-		__settings.maxUsers = 6;
-		__settings.groupId = "default";
-
-		SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_ADD, (e:SFS2X.SFSEvent) => {
-			console.log (": onRoomAdded: ", e);
-
-			this.m_mainUI.nukeLater ();
-
-			this.showRoomID (__roomID);
-
-			ConnectionManager.instance ().JoinRoom_Script (__roomID);
-		});
-
-		SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_CREATION_ERROR, (e:SFS2X.SFSEvent) => {
-			console.log (": onRoomCreationError: ", e);
-		});
-
-		SFSManager.instance ().send (new SFS2X.CreateRoomRequest (__settings));
-	}
-
-//------------------------------------------------------------------------------------------
 	public showRoomID (__roomID:string):void {
 		this.setStatusMessage ("Room ID: ");
 
@@ -143,16 +126,16 @@ export class CreateRoom extends DATState {
 		__hbox.addSortableChild (__roomIDText, 0, 0.0, false);
 
 		this.horizontalPercent (__hbox, 0.50);
-		this.verticalPercent (__hbox, 0.50);
+		this.verticalPercent (__hbox, 0.25);
 	}
 
 //------------------------------------------------------------------------------------------
-	public setupUI ():void {
+	public setupCreateRoomUI ():void {
 		this.setStatusMessage ("Create Room");
 
 		var __ypercent:number = 0.50;
 
-		var __hbox:HBox = this.m_mainUI = this.addGameObjectAsChild (HBox, 0, 0.0, false) as HBox;
+		var __hbox:HBox = this.m_createRoomLayout = this.addGameObjectAsChild (HBox, 0, 0.0, false) as HBox;
 		__hbox.afterSetup ([400, 100, XJustify.SPACE_BETWEEN]);
 
 		var __vbox:VBox = __hbox.addGameObjectAsChild (VBox, 0, 0.0, false) as VBox;
@@ -202,6 +185,260 @@ export class CreateRoom extends DATState {
 
 			this.createRoom ();
 		});
+	}
+
+	//------------------------------------------------------------------------------------------
+	public Idle_Script ():void {
+		this.script.gotoTask ([
+				
+			//------------------------------------------------------------------------------------------
+			// control
+			//------------------------------------------------------------------------------------------
+			() => {
+				this.script.addTask ([
+					XTask.WAIT1000, 1 * 1000,
+
+					XTask.LABEL, "loop",
+						XTask.WAIT, 0x0100,
+
+					XTask.RETN,
+				]);	
+			},
+				
+			//------------------------------------------------------------------------------------------
+			// animation
+			//------------------------------------------------------------------------------------------	
+			XTask.LABEL, "loop",
+                XTask.WAIT, 0x0100,
+					
+				XTask.GOTO, "loop",
+				
+			XTask.RETN,
+				
+			//------------------------------------------------------------------------------------------			
+		]);
+			
+	//------------------------------------------------------------------------------------------
+	}
+
+//------------------------------------------------------------------------------------------
+	public createRoom ():void {
+		var __roomID:string = GUID.create ().substring (1, 18);
+
+		var __settings:SFS2X.RoomSettings = new SFS2X.RoomSettings (__roomID);
+		__settings.maxUsers = 6;
+		__settings.groupId = "default";
+
+		SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_ADD, (e:SFS2X.SFSEvent) => {
+			console.log (": onRoomAdded: ", e);
+
+			this.m_createRoomLayout.nukeLater ();
+
+			this.showRoomID (__roomID);
+
+			ConnectionManager.instance ().JoinRoom_Script (__roomID);
+
+			this.WaitForAllToJoin_Script ();
+		});
+
+		SFSManager.instance ().once (SFS2X.SFSEvent.ROOM_CREATION_ERROR, (e:SFS2X.SFSEvent) => {
+			console.log (": onRoomCreationError: ", e);
+		});
+
+		SFSManager.instance ().send (new SFS2X.CreateRoomRequest (__settings));
+	}
+
+	//------------------------------------------------------------------------------------------
+	public setupWaitForAllToJoinUI ():void {
+		var __waitJoinLayout:VBox = this.m_waitJoinLayout = this.addGameObjectAsChild (VBox, 0, 0.0, false) as VBox;
+		__waitJoinLayout.afterSetup ([1000, 300, XJustify.CENTER]);
+
+		this.horizontalPercent (__waitJoinLayout, 0.50);
+		this.verticalPercent (__waitJoinLayout, 0.50);
+
+		var __titleLabel:XTextSprite = this.createXTextSprite (
+			-1,
+			-1,
+			"Joined Users:",
+			"Nunito",
+			50,
+			0x000000,
+			true,
+			"center", "center"
+		);
+
+		__waitJoinLayout.addItem (__titleLabel);
+		__waitJoinLayout.addSortableChild (__titleLabel, 0, 0.0, false);
+
+		__waitJoinLayout.horizontalPercent (__titleLabel, 0.50);
+
+		var __spacer:Spacer = __waitJoinLayout.addGameObjectAsChild (Spacer, 0, 0.0, false) as Spacer;
+		__spacer.afterSetup ([100, 50]);
+		__waitJoinLayout.addItem (__spacer);
+
+		var __joinedUsers:VBox = this.m_joinedUsersLayout = __waitJoinLayout.addGameObjectAsChild (VBox, 0, 0.0, false) as VBox;
+		__joinedUsers.afterSetup ([1000, 200, XJustify.START]);
+
+		__waitJoinLayout.addItem (__joinedUsers);
+
+		var __testLabel:XTextSprite = this.createXTextSprite (
+			-1,
+			-1,
+			"Test Message:",
+			"Nunito",
+			25,
+			0x000000,
+			true,
+			"center", "center"
+		);
+
+		__joinedUsers.addItem (__testLabel);
+		__joinedUsers.addSortableChild (__testLabel, 0, 0.0, false)
+		__joinedUsers.horizontalPercent (__testLabel, 0.50);
+
+		__waitJoinLayout.horizontalPercent (__joinedUsers, 0.50);
+	}
+
+	//------------------------------------------------------------------------------------------
+	public collectUsers (__userMap:Map<SFS2X.SFSUser, number>, __userList:Array<SFS2X.SFSUser>):void {
+		var __user:SFS2X.FSUser;
+
+		for (__user of __userList) {
+			__userMap.set (__user, 0);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------
+	public showJoinedUsers (__userMap:Map<SFS2X.SFSUser, number>):void {
+		this.m_joinedUsersLayout.removeAllItems ();
+		
+		XType.forEach (__userMap,
+			(__user:SFS2X.SFSUser) => {
+				var __userLabel:XTextSprite = this.createXTextSprite (
+					-1,
+					-1,
+					__user.name,
+					"Nunito",
+					25,
+					0x000000,
+					true,
+					"center", "center"
+				);
+
+				this.m_joinedUsersLayout.addItem (__userLabel);
+				this.m_joinedUsersLayout.addSortableChild (__userLabel, 0, 0.0, false);
+				this.m_joinedUsersLayout.horizontalPercent (__userLabel, 0.50);
+			}
+		);
+	}
+
+	//------------------------------------------------------------------------------------------
+	public WaitForAllToJoin_Script ():void {
+		var __userList:Array<SFS2X.SFSUser>;
+		var __userMap:Map<SFS2X.SFSUser, number> = new Map<SFS2X.SFSUser, number> ();
+
+		this.setupWaitForAllToJoinUI ();
+
+		this.script.gotoTask ([
+				
+			//------------------------------------------------------------------------------------------
+			// control
+			//------------------------------------------------------------------------------------------
+			() => {
+				this.script.addTask ([
+					XTask.LABEL, "loop",
+						XTask.WAIT1000, 1 * 1000,
+
+						XTask.FLAGS, (__task:XTask) => {
+							__userList = ConnectionManager.instance ().getSFSUserManager ().getUserList ();
+
+							console.log (": users: ", __userMap, __userMap.size);
+
+							this.collectUsers (__userMap, __userList);
+
+							this.showJoinedUsers (__userMap);
+
+							__task.ifTrue (__userMap.size == 3);
+						}, XTask.BNE, "loop",
+
+						() => {
+							this.WaitToStart_Script ();
+						},
+
+						XTask.GOTO, "loop",
+
+					XTask.RETN,
+				]);	
+			},
+				
+			//------------------------------------------------------------------------------------------
+			// animation
+			//------------------------------------------------------------------------------------------	
+			XTask.LABEL, "loop",
+                XTask.WAIT, 0x0100,
+					
+				XTask.GOTO, "loop",
+				
+			XTask.RETN,
+				
+			//------------------------------------------------------------------------------------------			
+		]);
+			
+	//------------------------------------------------------------------------------------------
+	}
+
+	//------------------------------------------------------------------------------------------
+	public WaitToStart_Script ():void {
+		var __startButton:XTextSpriteButton = this.m_waitJoinLayout.addGameObjectAsChild (XTextSpriteButton, 0, 0.0, false) as XTextSpriteButton;
+		__startButton.afterSetup ([
+			"StandardButton",
+			true, 10, 300, 60,
+			"START GAME",
+			"Nunito",
+			25,
+			0x000000,
+			0x000000,
+			0x000000,
+			0x000000,
+			0x000000,
+			false,
+			"center", "center"
+		]);
+
+		this.m_waitJoinLayout.addItem (__startButton);
+		this.m_waitJoinLayout.horizontalPercent (__startButton, 0.50);
+
+		//------------------------------------------------------------------------------------------
+		this.script.gotoTask ([
+				
+			//------------------------------------------------------------------------------------------
+			// control
+			//------------------------------------------------------------------------------------------
+			() => {
+				this.script.addTask ([
+					XTask.LABEL, "loop",
+						XTask.WAIT, 0x0100,
+
+						XTask.GOTO, "loop",
+
+					XTask.RETN,
+				]);	
+			},
+				
+			//------------------------------------------------------------------------------------------
+			// animation
+			//------------------------------------------------------------------------------------------	
+			XTask.LABEL, "loop",
+                XTask.WAIT, 0x0100,
+					
+				XTask.GOTO, "loop",
+				
+			XTask.RETN,
+				
+			//------------------------------------------------------------------------------------------			
+		]);
+			
+	//------------------------------------------------------------------------------------------
 	}
 
 //------------------------------------------------------------------------------------------
