@@ -2,6 +2,7 @@
 import * as SFS2X from "sfs2x-api";
 import { SFSManager } from '../../engine/sfs/SFSManager';
 import { XSignal } from '../../engine/signals/XSignal';
+import { XType } from "../../engine/type/XType";
 
 //------------------------------------------------------------------------------------------	
 	export class MessagingManager {	
@@ -13,10 +14,10 @@ import { XSignal } from '../../engine/signals/XSignal';
         public m_sfsUser:SFS2X.SFSUser;
         public m_sfsUserManager:SFS2X.SFSUserManager;
     
-        public m_readySignal:XSignal;
-        public m_completeSignal:XSignal;
-        public m_triggerSignal:XSignal;
-        public m_screenChangeSignal:XSignal;
+        public m_readySignal:Map<number, XSignal>;
+        public m_completeSignal:Map<number, XSignal>;
+        public m_triggerSignal:Map<number, XSignal>;
+        public m_screenChangeSignal:Map<number, XSignal>;
         
         public static READY_SIGNAL:string = "ready";
         public static COMPLETE_SIGNAL:string = "complete";
@@ -45,39 +46,91 @@ import { XSignal } from '../../engine/signals/XSignal';
             this.m_sfsUser = __sfsUser;
             this.m_sfsUserManager = __sfsUser.getUserManager ();
 
-            this.m_readySignal = new XSignal ();
-            this.m_completeSignal = new XSignal ();
-            this.m_triggerSignal = new XSignal ();
-            this.m_screenChangeSignal = new XSignal ();
+            this.m_readySignal = new Map<number, XSignal> ();
+            this.m_completeSignal = new Map<number, XSignal> ();
+            this.m_triggerSignal = new Map<number, XSignal> ();
+            this.m_screenChangeSignal = new Map<number, XSignal> ();
 
             SFSManager.instance ().addEventListener (SFS2X.SFSEvent.PRIVATE_MESSAGE, this.onPrivateMessage.bind (this));
         }
 
     //------------------------------------------------------------------------------------------
         public cleanup ():void {
-            this.m_readySignal.removeAllListeners ();
-            this.m_completeSignal.removeAllListeners ();
-            this.m_triggerSignal.removeAllListeners ();
-            this.m_screenChangeSignal.removeAllListeners ();
+            XType.forEach (this.m_readySignal,
+                (__userId:number) => {
+                    this.m_readySignal.get (__userId).removeAllListeners ();
+                }
+            );
+
+            XType.forEach (this.m_completeSignal,
+                (__userId:number) => {
+                    this.m_completeSignal.get (__userId).removeAllListeners ();
+                }
+            );
+
+            XType.forEach (this.m_triggerSignal,
+                (__userId:number) => {
+                    this.m_triggerSignal.get (__userId).removeAllListeners ();
+                }
+            );
+
+            XType.forEach (this.m_screenChangeSignal,
+                (__userId:number) => {
+                    this.m_screenChangeSignal.get (__userId).removeAllListeners ();
+                }
+            );
         }
 
 	//------------------------------------------------------------------------------------------
         public onPrivateMessage (e:SFS2X.SFSEvent):void {
             console.log (": onPrivateMessage: ", e);
 
+            var __userId:number = e.sender.id;
+
             switch (e.message) {
                 case MessagingManager.READY_SIGNAL:
+                    if (this.m_readySignal.has (__userId)) {
+                        this.m_readySignal.get (__userId).fireSignal ();
+                    }
+
                     break;
 
                 case MessagingManager.COMPLETE_SIGNAL:
+                    if (this.m_completeSignal.has (__userId)) {
+                        this.m_completeSignal.get (__userId).fireSignal ();
+                    }
+
                     break;
 
                 case MessagingManager.TRIGGER_SIGNAL:
+                    if (this.m_triggerSignal.has (__userId)) {
+                        this.m_triggerSignal.get (__userId).fireSignal ();
+                    }
+
                     break;
-                    
+
                 case MessagingManager.SCREENCHANGE_SIGNAL:
+                    if (this.m_screenChangeSignal.has (__userId)) {
+                        this.m_screenChangeSignal.get (__userId).fireSignal ();
+                    }
+                
                     break;
             }
+        }
+
+    //------------------------------------------------------------------------------------------
+        public getModeratorID ():number {
+            var __userList:Array<SFS2X.SFSUser> = this.m_sfsUserManager.getUserList ();
+
+            var __user:SFS2X.SFSUser;
+
+            for (__user of __userList) {
+                if (__user.name.startsWith ("moderator:")) {
+                    return __user.id;
+                }
+            }
+
+            return -1;
         }
 
     //------------------------------------------------------------------------------------------
@@ -148,43 +201,67 @@ import { XSignal } from '../../engine/signals/XSignal';
         }
 
 	//------------------------------------------------------------------------------------------
-        public addReadyListener (__listener:any):number {
-            return this.m_readySignal.addListener (__listener);
+        public addReadyListener (__userId:number, __listener:any):number {
+            if (!this.m_readySignal.has (__userId)) {
+                this.m_readySignal.set (__userId, new XSignal ());
+            }
+
+            return this.m_readySignal.get (__userId).addListener (__listener);
         }
 
 	//------------------------------------------------------------------------------------------
-        public removeReadyListener (__id):void {
-            return this.m_readySignal.removeListener (__id);
+        public removeReadyListener (__userId:number, __id):void {
+            if (this.m_readySignal.has (__userId)) {
+                return this.m_readySignal.get (__userId).removeListener (__id);
+            }
         }
 
 	//------------------------------------------------------------------------------------------
-        public addCompleteListener (__listener:any):number {
-            return this.m_completeSignal.addListener (__listener);
+        public addCompleteListener (__userId:number, __listener:any):number {
+            if (!this.m_completeSignal.has (__userId)) {
+                this.m_completeSignal.set (__userId, new XSignal ());
+            }
+
+            return this.m_completeSignal.get (__userId).addListener (__listener);
         }
 
 	//------------------------------------------------------------------------------------------
-        public removeCompleteListener (__id):void {
-            return this.m_completeSignal.removeListener (__id);
+        public removeCompleteListener (__userId:number, __id):void {
+            if (this.m_completeSignal.has (__userId)) {
+                return this.m_completeSignal.get (__userId).removeListener (__id);
+            }
         }
 	
 	//------------------------------------------------------------------------------------------
-        public addTriggerListener (__listener:any):number {
-            return this.m_triggerSignal.addListener (__listener);
+        public addTriggerListener (__userId:number, __listener:any):number {
+            if (!this.m_triggerSignal.has (__userId)) {
+                this.m_triggerSignal.set (__userId, new XSignal ());
+            }
+
+            return this.m_triggerSignal.get (__userId).addListener (__listener);
         }
 
 	//------------------------------------------------------------------------------------------
-        public removeTriggerListener  (__id):void {
-            return this.m_triggerSignal.removeListener (__id);
+        public removeTriggerListener  (__userId:number, __id):void {
+            if (this.m_triggerSignal.has (__userId)) {
+                return this.m_triggerSignal.get (__userId).removeListener (__id);
+            }
         }
 
 	//------------------------------------------------------------------------------------------
-        public addScreenChangeListener (__listener:any):number {
-            return this.m_screenChangeSignal.addListener (__listener);
+        public addScreenChangeListener (__userId:number, __listener:any):number {
+            if (!this.m_screenChangeSignal.has (__userId)) {
+                this.m_screenChangeSignal.set (__userId, new XSignal ());
+            }
+
+            return this.m_screenChangeSignal.get (__userId).addListener (__listener);
         }
 
 	//------------------------------------------------------------------------------------------
-        public removeScreenChangeListener  (__id):void {
-            return this.m_screenChangeSignal.removeListener (__id);
+        public removeScreenChangeListener  (__userId:number, __id):void {
+            if (this.m_screenChangeSignal.has (__userId)) {
+                return this.m_screenChangeSignal.get (__userId).removeListener (__id);
+            }
         }
 
 //------------------------------------------------------------------------------------------

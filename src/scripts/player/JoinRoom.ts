@@ -28,6 +28,8 @@ import { DATState } from '../scene/DATState';
 import { HBox } from '../../engine/ui/HBox';
 import { VBox } from '../../engine/ui/VBox';
 import { XJustify } from '../../engine/ui/XJustify';
+import { MessagingManager } from '../sfs/MessagingManager';
+import { MessagingSubManager } from '../sfs/MessagingSubManager';
 
 //------------------------------------------------------------------------------------------
 export class JoinRoom extends DATState {
@@ -272,6 +274,10 @@ export class JoinRoom extends DATState {
 
 		this.horizontalPercent (__waitMessage, 0.50);
 		this.verticalPercent (__waitMessage, 0.50);
+
+		MessagingManager.instance ().addScreenChangeListener (MessagingManager.instance ().getModeratorID (), () => {
+			console.log (": all joined: ");
+		});
 
 		//------------------------------------------------------------------------------------------
 		this.script.gotoTask ([

@@ -30,89 +30,89 @@ import { MessagingManager } from './MessagingManager';
             var __id:number;
 
 			for (__id of this.m_readySignals.keys ()) {
-				this.removeReadyListener (__id);
+				this.removeReadyListener (this.m_readySignals.get (__id), __id);
 			}
 
 			for (__id of this.m_completeSignals.keys ()) {
-				this.removeCompleteListener (__id);
+				this.removeCompleteListener (this.m_completeSignals.get (__id), __id);
 			}
 
 			for (__id of this.m_triggerSignals.keys ()) {
-				this.removeTriggerListener (__id);
+				this.removeTriggerListener (this.m_triggerSignals.get (__id), __id);
 			}
 
 			for (__id of this.m_screenChangeSignals.keys ()) {
-				this.removeScreenChangeListener (__id);
+				this.removeScreenChangeListener (this.m_screenChangeSignals.get (__id), __id);
 			}
 		}		
 
 //------------------------------------------------------------------------------------------
-		public addReadyListener (__listener:any):number {
-			var __id:number = MessagingManager.instance ().addReadyListener (__listener);
+		public addReadyListener (__userId:number, __listener:any):number {
+			var __id:number = MessagingManager.instance ().addReadyListener (__userId, __listener);
 
-			this.m_readySignals.set (__id, 0);
+			this.m_readySignals.set (__id, __userId);
 		
 			return __id;
 		}
 
 //------------------------------------------------------------------------------------------
-		public removeReadyListener (__id):void {
+		public removeReadyListener (__userId:number, __id):void {
 			if (this.m_readySignals.has (__id)) {
-				MessagingManager.instance ().removeReadyListener (__id);
+				MessagingManager.instance ().removeReadyListener (__userId, __id);
 
 				this.m_readySignals.delete (__id);
 			}
 		}
 
 //------------------------------------------------------------------------------------------
-		public addCompleteListener (__listener:any):number {
-			var __id:number = MessagingManager.instance ().addCompleteListener (__listener);
+		public addCompleteListener (__userId:number, __listener:any):number {
+			var __id:number = MessagingManager.instance ().addCompleteListener (__userId, __listener);
 
-			this.m_completeSignals.set (__id, 0);
+			this.m_completeSignals.set (__id, __userId);
 
 			return __id;
 		}
 
 //------------------------------------------------------------------------------------------
-		public removeCompleteListener (__id):void {
+		public removeCompleteListener (__userId:number, __id):void {
 			if (this.m_completeSignals.has (__id)) {
-				MessagingManager.instance ().removeCompleteListener (__id);
+				MessagingManager.instance ().removeCompleteListener (__userId, __id);
 
 				this.m_completeSignals.delete (__id);
 			}
 		}
 
 //------------------------------------------------------------------------------------------
-		public addTriggerListener (__listener:any):number {
-			var __id:number = MessagingManager.instance ().addTriggerListener (__listener);
+		public addTriggerListener (__userId:number, __listener:any):number {
+			var __id:number = MessagingManager.instance ().addTriggerListener (__userId, __listener);
 
-			this.m_triggerSignals.set (__id, 0);
+			this.m_triggerSignals.set (__id, __userId);
 
 			return __id;
 		}
 
 //------------------------------------------------------------------------------------------
-		public removeTriggerListener  (__id):void {
+		public removeTriggerListener  (__userId:number, __id):void {
 			if (this.m_triggerSignals.has (__id)) {
-				MessagingManager.instance ().removeTriggerListener (__id);
+				MessagingManager.instance ().removeTriggerListener (__userId, __id);
 
 				this.m_triggerSignals.delete (__id);
 			}
 		}
 
 //------------------------------------------------------------------------------------------
-		public addScreenChangeListener (__listener:any):number {
-			var __id:number = MessagingManager.instance ().addScreenChangeListener (__listener);
+		public addScreenChangeListener (__userId:number, __listener:any):number {
+			var __id:number = MessagingManager.instance ().addScreenChangeListener (__userId, __listener);
 
-			this.m_screenChangeSignals.set (__id, 0);
+			this.m_screenChangeSignals.set (__id, __userId);
 
 			return __id;
 		}
 
 //------------------------------------------------------------------------------------------
-		public removeScreenChangeListener  (__id):void {
+		public removeScreenChangeListener  (__userId:number, __id):void {
 			if (this.m_screenChangeSignals.has (__id)) {
-				MessagingManager.instance ().removeScreenChangeListener (__id);
+				MessagingManager.instance ().removeScreenChangeListener (__userId, __id);
 
 				this.m_screenChangeSignals.delete (__id);
 			}
