@@ -23,6 +23,9 @@ import { XSignal } from '../../engine/signals/XSignal';
         public static TRIGGER_SIGNAL:string = "trigger";
         public static SCREENCHANGE_SIGNAL:string = "screen-change";
 
+        public static ALL_PLAYERS:number = -1;
+        public static ALL_IN_ROOM:number = -2;
+
     //------------------------------------------------------------------------------------------
         public static instance ():MessagingManager {
             if (MessagingManager.self == null) {
@@ -61,23 +64,87 @@ import { XSignal } from '../../engine/signals/XSignal';
 	//------------------------------------------------------------------------------------------
         public onPrivateMessage (e:SFS2X.SFSEvent):void {
             console.log (": onPrivateMessage: ", e);
+
+            switch (e.message) {
+                case MessagingManager.READY_SIGNAL:
+                    break;
+
+                case MessagingManager.COMPLETE_SIGNAL:
+                    break;
+
+                case MessagingManager.TRIGGER_SIGNAL:
+                    break;
+                    
+                case MessagingManager.SCREENCHANGE_SIGNAL:
+                    break;
+            }
         }
 
     //------------------------------------------------------------------------------------------
-        public fireReadySignal ():void {
+        public fireReadySignal (__userId:number):void {
+            this.fireSignal (__userId,
+                (__userId:number) => {
+                    SFSManager.instance ().send (new SFS2X.PrivateMessageRequest (MessagingManager.READY_SIGNAL, __userId));
+                }
+            );
         }
 
     //------------------------------------------------------------------------------------------
-        public fireCompleteSignal ():void {
+        public fireCompleteSignal (__userId:number):void {
+            this.fireSignal (__userId,
+                (__userId:number) => {
+                    SFSManager.instance ().send (new SFS2X.PrivateMessageRequest (MessagingManager.COMPLETE_SIGNAL, __userId));
+                }
+            );
         }
 
     //------------------------------------------------------------------------------------------
-        public fireTriggerSignal ():void {
+        public fireTriggerSignal (__userId:number, __message:string, __object:SFS2X.SFSObject):void {
+            this.fireSignal (__userId,
+                (__userId:number) => {
+                    SFSManager.instance ().send (new SFS2X.PrivateMessageRequest (MessagingManager.TRIGGER_SIGNAL, __userId));
+                }
+            );
         }
 
     //------------------------------------------------------------------------------------------
-        public fireScreenChangeSignal (__id:number):void {
-            SFSManager.instance ().send (new SFS2X.PrivateMessageRequest (MessagingManager.SCREENCHANGE_SIGNAL, __id));
+        public fireScreenChangeSignal (__userId:number, __message:string, __object:SFS2X.SFSObject):void {
+            this.fireSignal (__userId,
+                (__userId:number) => {
+                    SFSManager.instance ().send (new SFS2X.PrivateMessageRequest (MessagingManager.SCREENCHANGE_SIGNAL, __userId));
+                }
+            );
+        }
+
+    //------------------------------------------------------------------------------------------
+        public fireSignal (__userId:number, __callback:any):void {
+            var __userList:Array<SFS2X.SFSUser> = this.m_sfsUserManager.getUserList ();
+            var __user:SFS2X.SFSUser;
+
+            switch (__userId) {
+                case MessagingManager.ALL_PLAYERS:
+                    for (__user of __userList) {
+                        if (!__user.isItMe && !__user.name.startsWith ("moderator:")) {
+                            __callback (__user.id);
+                        }
+                    }
+
+                    break;
+
+                case MessagingManager.ALL_IN_ROOM:
+                    for (__user of __userList) {
+                        if (!__user.isItMe) {
+                            __callback (__user.id);
+                        }
+                    }
+
+                    break;
+
+                default:
+                    __callback (__userId);
+
+                    break;
+            }
         }
 
 	//------------------------------------------------------------------------------------------

@@ -31,6 +31,7 @@ import { VBox } from '../../engine/ui/VBox';
 import { XJustify } from '../../engine/ui/XJustify';
 import { Spacer } from '../../engine/ui/Spacer';
 import { FlockLeader } from '../test/FlockLeader';
+import { MessagingManager } from '../sfs/MessagingManager';
 
 //------------------------------------------------------------------------------------------
 export class CreateRoom extends DATState {
@@ -281,21 +282,6 @@ export class CreateRoom extends DATState {
 
 		__waitJoinLayout.addItem (__joinedUsers);
 
-		var __testLabel:XTextSprite = this.createXTextSprite (
-			-1,
-			-1,
-			"Test Message:",
-			"Nunito",
-			25,
-			0x000000,
-			true,
-			"center", "center"
-		);
-
-		__joinedUsers.addItem (__testLabel);
-		__joinedUsers.addSortableChild (__testLabel, 0, 0.0, false)
-		__joinedUsers.horizontalPercent (__testLabel, 0.50);
-
 		__waitJoinLayout.horizontalPercent (__joinedUsers, 0.50);
 	}
 
@@ -407,6 +393,12 @@ export class CreateRoom extends DATState {
 
 		this.m_waitJoinLayout.addItem (__startButton);
 		this.m_waitJoinLayout.horizontalPercent (__startButton, 0.50);
+
+		__startButton.addMouseUpListener (() => {
+			__startButton.setDisabled (true);
+
+			MessagingManager.instance ().fireScreenChangeSignal (MessagingManager.ALL_PLAYERS, "hellew", null);
+		})
 
 		//------------------------------------------------------------------------------------------
 		this.script.gotoTask ([
