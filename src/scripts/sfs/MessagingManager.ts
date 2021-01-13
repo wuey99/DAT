@@ -17,12 +17,12 @@ import { XType } from "../../engine/type/XType";
         public m_readySignal:Map<number, XSignal>;
         public m_completeSignal:Map<number, XSignal>;
         public m_triggerSignal:Map<number, XSignal>;
-        public m_screenChangeSignal:Map<number, XSignal>;
+        public m_sceneChangeSignal:Map<number, XSignal>;
         
         public static READY_SIGNAL:string = "ready";
         public static COMPLETE_SIGNAL:string = "complete";
         public static TRIGGER_SIGNAL:string = "trigger";
-        public static SCREENCHANGE_SIGNAL:string = "screen-change";
+        public static SCENECHANGE_SIGNAL:string = "scene-change";
 
         public static ALL_PLAYERS:number = -1;
         public static ALL_IN_ROOM:number = -2;
@@ -49,7 +49,7 @@ import { XType } from "../../engine/type/XType";
             this.m_readySignal = new Map<number, XSignal> ();
             this.m_completeSignal = new Map<number, XSignal> ();
             this.m_triggerSignal = new Map<number, XSignal> ();
-            this.m_screenChangeSignal = new Map<number, XSignal> ();
+            this.m_sceneChangeSignal = new Map<number, XSignal> ();
 
             SFSManager.instance ().addEventListener (SFS2X.SFSEvent.PRIVATE_MESSAGE, this.onPrivateMessage.bind (this));
         }
@@ -74,9 +74,9 @@ import { XType } from "../../engine/type/XType";
                 }
             );
 
-            XType.forEach (this.m_screenChangeSignal,
+            XType.forEach (this.m_sceneChangeSignal,
                 (__userId:number) => {
-                    this.m_screenChangeSignal.get (__userId).removeAllListeners ();
+                    this.m_sceneChangeSignal.get (__userId).removeAllListeners ();
                 }
             );
         }
@@ -109,9 +109,9 @@ import { XType } from "../../engine/type/XType";
 
                     break;
 
-                case MessagingManager.SCREENCHANGE_SIGNAL:
-                    if (this.m_screenChangeSignal.has (__userId)) {
-                        this.m_screenChangeSignal.get (__userId).fireSignal ();
+                case MessagingManager.SCENECHANGE_SIGNAL:
+                    if (this.m_sceneChangeSignal.has (__userId)) {
+                        this.m_sceneChangeSignal.get (__userId).fireSignal ();
                     }
                 
                     break;
@@ -161,10 +161,10 @@ import { XType } from "../../engine/type/XType";
         }
 
     //------------------------------------------------------------------------------------------
-        public fireScreenChangeSignal (__userId:number, __message:string, __object:SFS2X.SFSObject):void {
+        public fireSceneChangeSignal (__userId:number, __message:string, __object:SFS2X.SFSObject):void {
             this.fireSignal (__userId,
                 (__userId:number) => {
-                    SFSManager.instance ().send (new SFS2X.PrivateMessageRequest (MessagingManager.SCREENCHANGE_SIGNAL, __userId));
+                    SFSManager.instance ().send (new SFS2X.PrivateMessageRequest (MessagingManager.SCENECHANGE_SIGNAL, __userId));
                 }
             );
         }
@@ -249,18 +249,18 @@ import { XType } from "../../engine/type/XType";
         }
 
 	//------------------------------------------------------------------------------------------
-        public addScreenChangeListener (__userId:number, __listener:any):number {
-            if (!this.m_screenChangeSignal.has (__userId)) {
-                this.m_screenChangeSignal.set (__userId, new XSignal ());
+        public addSceneChangeListener (__userId:number, __listener:any):number {
+            if (!this.m_sceneChangeSignal.has (__userId)) {
+                this.m_sceneChangeSignal.set (__userId, new XSignal ());
             }
 
-            return this.m_screenChangeSignal.get (__userId).addListener (__listener);
+            return this.m_sceneChangeSignal.get (__userId).addListener (__listener);
         }
 
 	//------------------------------------------------------------------------------------------
-        public removeScreenChangeListener  (__userId:number, __id):void {
-            if (this.m_screenChangeSignal.has (__userId)) {
-                return this.m_screenChangeSignal.get (__userId).removeListener (__id);
+        public removeSceneChangeListener  (__userId:number, __id):void {
+            if (this.m_sceneChangeSignal.has (__userId)) {
+                return this.m_sceneChangeSignal.get (__userId).removeListener (__id);
             }
         }
 

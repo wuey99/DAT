@@ -6,14 +6,14 @@ import { MessagingManager } from './MessagingManager';
 		public m_readySignals:Map<number, number>;
 		public m_completeSignals:Map<number, number>;
 		public m_triggerSignals:Map<number, number>;
-		public m_screenChangeSignals:Map<number, number>;
+		public m_sceneChangeSignals:Map<number, number>;
 		
 //------------------------------------------------------------------------------------------
 		constructor () {		
 			this.m_readySignals = new Map<number, number> ();
 			this.m_completeSignals = new Map<number, number> ();
 			this.m_triggerSignals = new Map<number, number> ();
-			this.m_screenChangeSignals = new Map<number, number> ();
+			this.m_sceneChangeSignals = new Map<number, number> ();
 		}
 
 //------------------------------------------------------------------------------------------
@@ -41,8 +41,8 @@ import { MessagingManager } from './MessagingManager';
 				this.removeTriggerListener (this.m_triggerSignals.get (__id), __id);
 			}
 
-			for (__id of this.m_screenChangeSignals.keys ()) {
-				this.removeScreenChangeListener (this.m_screenChangeSignals.get (__id), __id);
+			for (__id of this.m_sceneChangeSignals.keys ()) {
+				this.removeSceneChangeListener (this.m_sceneChangeSignals.get (__id), __id);
 			}
 		}		
 
@@ -101,20 +101,20 @@ import { MessagingManager } from './MessagingManager';
 		}
 
 //------------------------------------------------------------------------------------------
-		public addScreenChangeListener (__userId:number, __listener:any):number {
-			var __id:number = MessagingManager.instance ().addScreenChangeListener (__userId, __listener);
+		public addSceneChangeListener (__userId:number, __listener:any):number {
+			var __id:number = MessagingManager.instance ().addSceneChangeListener (__userId, __listener);
 
-			this.m_screenChangeSignals.set (__id, __userId);
+			this.m_sceneChangeSignals.set (__id, __userId);
 
 			return __id;
 		}
 
 //------------------------------------------------------------------------------------------
-		public removeScreenChangeListener  (__userId:number, __id):void {
-			if (this.m_screenChangeSignals.has (__id)) {
-				MessagingManager.instance ().removeScreenChangeListener (__userId, __id);
+		public removeSceneChangeListener  (__userId:number, __id):void {
+			if (this.m_sceneChangeSignals.has (__id)) {
+				MessagingManager.instance ().removeSceneChangeListener (__userId, __id);
 
-				this.m_screenChangeSignals.delete (__id);
+				this.m_sceneChangeSignals.delete (__id);
 			}
 		}
 

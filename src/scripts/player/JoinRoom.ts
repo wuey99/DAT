@@ -275,7 +275,7 @@ export class JoinRoom extends DATState {
 		this.horizontalPercent (__waitMessage, 0.50);
 		this.verticalPercent (__waitMessage, 0.50);
 
-		MessagingManager.instance ().addScreenChangeListener (MessagingManager.instance ().getModeratorID (), () => {
+		MessagingManager.instance ().addSceneChangeListener (MessagingManager.instance ().getModeratorID (), () => {
 			console.log (": all joined: ");
 		});
 

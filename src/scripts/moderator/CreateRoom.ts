@@ -397,7 +397,7 @@ export class CreateRoom extends DATState {
 		__startButton.addMouseUpListener (() => {
 			__startButton.setDisabled (true);
 
-			MessagingManager.instance ().fireScreenChangeSignal (MessagingManager.ALL_PLAYERS, "hellew", null);
+			MessagingManager.instance ().fireSceneChangeSignal (MessagingManager.ALL_PLAYERS, "hellew", null);
 		})
 
 		//------------------------------------------------------------------------------------------
