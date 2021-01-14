@@ -41,6 +41,8 @@ export class XMLBox extends Box {
 	public static TextSpriteButton:string = "TextSpriteButton";
 	public static TextButton:string = "TextButton";
 	public static Spacer:string = "Spacer";
+	public static AnimatedSprite:string = "AnimatedSprite";
+	public static Image:string = "Image";
 
 	//------------------------------------------------------------------------------------------	
 	constructor () {
@@ -205,6 +207,14 @@ export class XMLBox extends Box {
 	public addSpacerFromXML (__box:Box, __xml:XSimpleXMLNode):void {
 	}
 
+	//------------------------------------------------------------------------------------------
+	public addAnimatedSpriteFromXML (__box:Box, __xml:XSimpleXMLNode):void {
+	}
+
+	//------------------------------------------------------------------------------------------
+	public addImageFromXML (__box:Box, __xml:XSimpleXMLNode):void {
+	}
+
     //------------------------------------------------------------------------------------------
     public parseXML (__depth:number, __box:Box, __xml:XSimpleXMLNode):void {
         var __tabs:Array<String> = ["", "...", "......", ".........", "............", "...............", "...................."];
@@ -246,6 +256,16 @@ export class XMLBox extends Box {
 
 				case XMLBox.Spacer:
 					this.addSpacerFromXML (__box, __xml);
+
+					break;
+
+				case XMLBox.AnimatedSprite:
+					this.addAnimatedSpriteFromXML (__box, __xml);
+
+					break;
+
+				case XMLBox.Image:
+					this.addImageFromXML (__box, __xml);
 
 					break;
 			}
