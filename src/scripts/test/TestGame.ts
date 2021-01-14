@@ -23,6 +23,12 @@ import { XTextButton } from '../../engine/ui/XTextButton';
 import { XTextSpriteButton } from '../../engine/ui/XTextSpriteButton';
 import { XTextSprite } from '../../engine/sprite/XTextSprite';
 import { TextInput } from 'pixi-textinput-v5';
+import { HBox } from '../../engine/ui/HBox';
+import { VBox } from '../../engine/ui/VBox';
+import { XJustify } from '../../engine/ui/XJustify';
+import { Spacer } from '../../engine/ui/Spacer';
+import { XMLBox } from '../../engine/ui/XMLBox';
+import { G } from '../../engine/app/G';
 
 //------------------------------------------------------------------------------------------
 export class TestGame extends XState {
@@ -45,6 +51,7 @@ export class TestGame extends XState {
 
 		console.log (": guid: ", GUID.create ());
 
+		/*
 		SFSManager.instance ().setup ();
 
 		SFSManager.instance ().connect (
@@ -80,18 +87,21 @@ export class TestGame extends XState {
 				},
 
 				XTask.RETN,
-			]);
+		]);
+		*/
 
 		var __leader:FlockLeader = world.addGameObject (FlockLeader, 0, 0.0, false) as FlockLeader;
 		__leader.afterSetup ([]);
 
+		/*
 		var __testButton:XSpriteButton = this.addGameObjectAsChild (XSpriteButton, 0, 0.0, false) as XSpriteButton;
 		__testButton.afterSetup ([
-			"TestButton",
+			"StandardButton",
 			true, 10, 250, 50
 		]);
-		__testButton.x = 256;
+		this.horizontalPercent (__testButton, 0.50);
 		__testButton.y = 256;
+		*/
 
 		this.createBitmapFont (
             "Aller",
@@ -104,6 +114,7 @@ export class TestGame extends XState {
             {chars: this.getBitmapFontChars ()}
 		);
 
+		/*
 		var __testButton2:XTextButton = this.addGameObjectAsChild (XTextButton, 0, 0.0, false) as XTextButton;
 		__testButton2.afterSetup ([
 			120,
@@ -163,7 +174,29 @@ export class TestGame extends XState {
 		this.addSortableChild (__textInput, 0, 0.0, true);
 		__textInput.x = 1024;
 		__textInput.y = 768;
-	
+		*/
+
+		this.createBitmapFont (
+			"Nunito",
+			{
+				fontFamily: "Nunito",
+				fontSize: 60,
+				strokeThickness: 0,
+				fill: "0xffffff",         
+			},
+			{chars: this.getBitmapFontChars ()}
+		);
+
+		var __xmlbox:XMLBox = this.addGameObjectAsChild (XMLBox, 0, 0.0, false) as XMLBox;
+		__xmlbox.afterSetup ([
+			1000, 1000, XJustify.NONE,
+			"<XMLBox>\n\t<VBox x=\"0\" y=\"0\" width=\"1000\" height=\"500\" justify=\"space-between\">\n\t\t<TextSpriteButton\n\t\t\tx=\"50%\"\n\t\t\tbuttonClassName=\"StandardButton\"\n\t\t\t9slice=\"true\"\n\t\t\t9width=\"200\"\n\t\t\t9height=\"50\"\n\t\t\ttext=\"hellew\"\n\t\t\tfontName=\"Nunito\"\n\t\t\tfontSize=\"30\"\n\t\t\tcolorNormal=\"0x000000\"\n\t\t\tcolorOver=\"0x00ff00\"\n\t\t\tcolorDown=\"0x0000ff\"\n\t\t\tcolorSelected=\"0xff0000\"\n\t\t\tcolorDisabled=\"0xc0c0c0\"\n\t\t\tbold=\"true\"\n\t\t\thorizontAlignment=\"center\"\n\t\t\tverticalAlignment=\"center\"\n\t\t/>\n\t\t<TextButton\n\t\t\tx=\"50%\"\n\t\t\twidth=\"200\"\n\t\t\theight=\"50\"\n\t\t\ttext=\"hellew\"\n\t\t\tfontName=\"Nunito\"\n\t\t\tfontSize=\"30\"\n\t\t\tcolorNormal=\"0x000000\"\n\t\t\tcolorOver=\"0x00ff00\"\n\t\t\tcolorDown=\"0x0000ff\"\n\t\t\tcolorSelected=\"0xff0000\"\n\t\t\tcolorDisabled=\"0xc0c0c0\"\n\t\t\tbold=\"true\"\n\t\t\thorizontAlignment=\"center\"\n\t\t\tverticalAlignment=\"center\"\n\t\t/>\n\t\t<SpriteButton\n\t\t\tx=\"50%\"\n\t\t\tbuttonClassName=\"TestButton\"\n\t\t\t9slice=\"true\"\n\t\t\t9width=\"200\"\n\t\t\t9height=\"50\"\n\t\t/>\n\t</VBox>\n</XMLBox>"
+			
+		]);
+
+		this.horizontalPercent (__xmlbox, 0.50);
+		this.verticalPercent (__xmlbox, 0.50);
+
 		return this;
 	}
 
@@ -172,5 +205,16 @@ export class TestGame extends XState {
         super.cleanup ();
 	}
 	
+
+//------------------------------------------------------------------------------------------
+	public getActualWidth ():number {
+		return G.SCREEN_WIDTH;
+	}
+
+//------------------------------------------------------------------------------------------
+	public getActualHeight ():number {
+		return G.SCREEN_HEIGHT;
+	}
+
 //------------------------------------------------------------------------------------------
 }

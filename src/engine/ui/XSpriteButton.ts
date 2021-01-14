@@ -57,6 +57,17 @@ export class XSpriteButton extends XButton {
         this.m_9height = __params[4];
 	}
 
+
+//------------------------------------------------------------------------------------------
+    public get width ():number {
+        return this.m_9slice ? this.m_9width : this.m_sprite.width;
+    }
+
+//------------------------------------------------------------------------------------------
+    public get height ():number {
+        return this.m_9slice ? this.m_9height : this.m_sprite.height;
+    }
+
 //------------------------------------------------------------------------------------------
     public createHighlightTask ():void {
         var __sprite:PIXI.NineSlicePlane;
