@@ -14,6 +14,7 @@ export class Box extends XGameObject {
     public m_width:number;
     public m_height:number;
     public m_justify:string;
+    public m_fill:number;
     public m_spacing:number;
     public m_padding:number;
     public m_topPadding:number;
@@ -43,6 +44,7 @@ export class Box extends XGameObject {
         this.m_width = __params[this.m_paramIndex++];
         this.m_height = __params[this.m_paramIndex++];
         this.m_justify = __params[this.m_paramIndex++];
+        this.m_fill = __params[this.m_paramIndex++];
 
         this.m_spacing = 0;
         this.m_padding = 0;

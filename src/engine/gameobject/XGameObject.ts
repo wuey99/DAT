@@ -389,7 +389,7 @@ export class XGameObject extends PIXI.Sprite {
 		
 //------------------------------------------------------------------------------------------
 	public verticalPercent (__displayObject:PIXI.Sprite | TextInput, __percent:number):XGameObject {
-		var __y:number = (this.getActualHeight () - __displayObject.height) * __percent;
+		var __y:number = (this.getActualHeight () - (__displayObject.height - __displayObject.pivot.y)) * __percent;
 			
 		__displayObject.y = __y;
 			
@@ -412,7 +412,7 @@ export class XGameObject extends PIXI.Sprite {
 		
 //------------------------------------------------------------------------------------------
 	public horizontalPercent (__displayObject:PIXI.Sprite | TextInput, __percent:number):XGameObject {
-		var __x:number = (this.getActualWidth () - __displayObject.width) * __percent;
+		var __x:number = (this.getActualWidth () - (__displayObject.width - __displayObject.pivot.x)) * __percent;
 			
 		__displayObject.x = __x;
 			

@@ -28,6 +28,8 @@ import { XJustify } from '../ui/XJustify';
 import { Spacer } from '../ui/Spacer';
 import { XType } from '../../engine/type/XType';
 import { G } from '../../engine/app/G';
+import { XMLAnimatedSprite } from './XMLAnimatedSprite';
+import { XMLSprite } from './XMLSprite';
 
 //------------------------------------------------------------------------------------------
 export class XMLBox extends Box {
@@ -41,6 +43,8 @@ export class XMLBox extends Box {
 	public static TextSpriteButton:string = "TextSpriteButton";
 	public static TextButton:string = "TextButton";
 	public static Spacer:string = "Spacer";
+	public static AnimatedSprite:string = "AnimatedSprite";
+	public static Sprite:string = "Sprite";
 
 	//------------------------------------------------------------------------------------------	
 	constructor () {
@@ -87,6 +91,7 @@ export class XMLBox extends Box {
 			__xml.hasAttribute ("width") ? __xml.getAttributeFloat ("width") : 300,
 			__xml.hasAttribute ("height") ? __xml.getAttributeFloat ("height") : 150,
 			__xml.hasAttribute ("justify") ? __xml.getAttributeString ("justify") : XJustify.SPACE_BETWEEN,
+			__xml.hasAttribute ("fill") ? __xml.getAttributeFloat ("fill") : -1
 		]);
 
 		return __hbox;
@@ -99,22 +104,23 @@ export class XMLBox extends Box {
 			__xml.hasAttribute ("width") ? __xml.getAttributeFloat ("width") : 300,
 			__xml.hasAttribute ("height") ? __xml.getAttributeFloat ("height") : 150,
 			__xml.hasAttribute ("justify") ? __xml.getAttributeString ("justify") : XJustify.SPACE_BETWEEN,
+			__xml.hasAttribute ("fill") ? __xml.getAttributeFloat ("fill") : -1
 		]);
 
 		return __vbox;
 	}
 
 	//------------------------------------------------------------------------------------------
-	private addButton (__box:Box, __xml:XSimpleXMLNode, __button:XButton):void {
-		__box.addItem (__button);
+	private addGameObject (__box:Box, __xml:XSimpleXMLNode, __gameObject:XGameObject):void {
+		__box.addItem (__gameObject);
 
 		if (__xml.hasAttribute ("x")) {
 			var __x:number = this.getPercent (__xml.getAttributeString ("x"));
 
 			if (__x < 0) {
-				__button.x = __xml.getAttributeFloat ("x");
+				__gameObject.x = __xml.getAttributeFloat ("x");
 			} else {
-				__box.horizontalPercent (__button, __x);
+				__box.horizontalPercent (__gameObject, __x);
 			}	
 		}
 
@@ -122,16 +128,16 @@ export class XMLBox extends Box {
 			var __y:number = this.getPercent (__xml.getAttributeString ("y"));
 
 			if (__y < 0) {
-				__button.y = __xml.getAttributeFloat ("y");
+				__gameObject.y = __xml.getAttributeFloat ("y");
 			} else {
-				__box.verticalPercent (__button, __y);
+				__box.verticalPercent (__gameObject, __y);
 			}
 		}
 	}
 
 	//------------------------------------------------------------------------------------------
 	public addSpriteButtonFromXML (__box:Box, __xml:XSimpleXMLNode):void {
-		var __button:XSpriteButton = this.addGameObjectAsChild (
+		var __button:XSpriteButton = __box.addGameObjectAsChild (
 			XSpriteButton, this.getLayer (), this.getDepth (), false
 		) as XSpriteButton;
 
@@ -145,7 +151,7 @@ export class XMLBox extends Box {
 			__xml.hasAttribute ("9height") ? __xml.getAttributeFloat ("9height") : 0,
 		]);
 
-		this.addButton (__box, __xml, __button);
+		this.addGameObject (__box, __xml, __button);
 	}
 
 	//------------------------------------------------------------------------------------------
@@ -173,12 +179,12 @@ export class XMLBox extends Box {
 			__xml.hasAttribute ("verticalAlignment") ? __xml.getAttributeString ("verticalAlignment") : "center"
 		]);
 
-		this.addButton (__box, __xml, __button);
+		this.addGameObject (__box, __xml, __button);
 	}
 
 	//------------------------------------------------------------------------------------------
 	public addTextButtonFromXML (__box:Box, __xml:XSimpleXMLNode):void {
-		var __button:XTextButton = this.addGameObjectAsChild (
+		var __button:XTextButton = __box.addGameObjectAsChild (
 			XTextButton, 0, 0.0, false
 		) as XTextButton;
 
@@ -198,11 +204,37 @@ export class XMLBox extends Box {
 			__xml.hasAttribute ("verticalAlignment") ? __xml.getAttributeString ("verticalAlignment") : "center"
 		]);
 
-		this.addButton (__box, __xml, __button);
+		this.addGameObject (__box, __xml, __button);
 	}
 
 	//------------------------------------------------------------------------------------------
 	public addSpacerFromXML (__box:Box, __xml:XSimpleXMLNode):void {
+	}
+
+	//------------------------------------------------------------------------------------------
+	public addAnimatedSpriteFromXML (__box:Box, __xml:XSimpleXMLNode):void {
+		var __gameObject:XGameObject = __box.addGameObjectAsChild (XMLAnimatedSprite, this.getLayer (), this.getDepth (), false) as XMLAnimatedSprite;
+
+		__gameObject.afterSetup ([
+			__xml.getAttributeString ("className"),
+			__xml.hasAttribute ("scaleX") ? __xml.getAttributeFloat ("scaleX") : 1.0,
+			__xml.hasAttribute ("scaleY") ? __xml.getAttributeFloat ("scaleY") : 1.0,
+		]);
+
+		this.addGameObject (__box, __xml, __gameObject);
+	}
+
+	//------------------------------------------------------------------------------------------
+	public addSpriteFromXML (__box:Box, __xml:XSimpleXMLNode):void {
+		var __gameObject:XGameObject = __box.addGameObjectAsChild (XMLSprite, this.getLayer (), this.getDepth (), false) as XMLSprite;
+
+		__gameObject.afterSetup ([
+			__xml.getAttributeString ("className"),
+			__xml.hasAttribute ("scaleX") ? __xml.getAttributeFloat ("scaleX") : 1.0,
+			__xml.hasAttribute ("scaleY") ? __xml.getAttributeFloat ("scaleY") : 1.0,
+		]);
+
+		this.addGameObject (__box, __xml, __gameObject);
 	}
 
     //------------------------------------------------------------------------------------------
@@ -246,6 +278,16 @@ export class XMLBox extends Box {
 
 				case XMLBox.Spacer:
 					this.addSpacerFromXML (__box, __xml);
+
+					break;
+
+				case XMLBox.AnimatedSprite:
+					this.addAnimatedSpriteFromXML (__box, __xml);
+
+					break;
+
+				case XMLBox.Sprite:
+					this.addSpriteFromXML (__box, __xml);
 
 					break;
 			}
