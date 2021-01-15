@@ -85,33 +85,7 @@ export class XMLBox extends Box {
 	}
 
 	//------------------------------------------------------------------------------------------
-	public addHBoxFromXML (__box:Box, __xml:XSimpleXMLNode):Box {
-		var __hbox:HBox = __box.addGameObjectAsChild (HBox, this.getLayer (), this.getDepth (), false) as HBox;
-		__hbox.afterSetup ([
-			__xml.hasAttribute ("width") ? __xml.getAttributeFloat ("width") : 300,
-			__xml.hasAttribute ("height") ? __xml.getAttributeFloat ("height") : 150,
-			__xml.hasAttribute ("justify") ? __xml.getAttributeString ("justify") : XJustify.SPACE_BETWEEN,
-			__xml.hasAttribute ("fill") ? __xml.getAttributeFloat ("fill") : -1
-		]);
-
-		return __hbox;
-	}
-
-	//------------------------------------------------------------------------------------------
-	public addVBoxFromXML (__box:Box, __xml:XSimpleXMLNode):Box {
-		var __vbox:VBox = __box.addGameObjectAsChild (VBox, this.getLayer (), this.getDepth (), false) as VBox;
-		__vbox.afterSetup ([
-			__xml.hasAttribute ("width") ? __xml.getAttributeFloat ("width") : 300,
-			__xml.hasAttribute ("height") ? __xml.getAttributeFloat ("height") : 150,
-			__xml.hasAttribute ("justify") ? __xml.getAttributeString ("justify") : XJustify.SPACE_BETWEEN,
-			__xml.hasAttribute ("fill") ? __xml.getAttributeFloat ("fill") : -1
-		]);
-
-		return __vbox;
-	}
-
-	//------------------------------------------------------------------------------------------
-	private addGameObject (__box:Box, __xml:XSimpleXMLNode, __gameObject:XGameObject):void {
+	private addAndPositionItem (__box:Box, __xml:XSimpleXMLNode, __gameObject:XGameObject):void {
 		__box.addItem (__gameObject);
 
 		if (__xml.hasAttribute ("x")) {
@@ -136,6 +110,36 @@ export class XMLBox extends Box {
 	}
 
 	//------------------------------------------------------------------------------------------
+	public addHBoxFromXML (__box:Box, __xml:XSimpleXMLNode):Box {
+		var __hbox:HBox = __box.addGameObjectAsChild (HBox, this.getLayer (), this.getDepth (), false) as HBox;
+		__hbox.afterSetup ([
+			__xml.hasAttribute ("width") ? __xml.getAttributeFloat ("width") : 300,
+			__xml.hasAttribute ("height") ? __xml.getAttributeFloat ("height") : 150,
+			__xml.hasAttribute ("justify") ? __xml.getAttributeString ("justify") : XJustify.SPACE_BETWEEN,
+			__xml.hasAttribute ("fill") ? __xml.getAttributeFloat ("fill") : -1
+		]);
+
+		this.addAndPositionItem (__box, __xml, __hbox);
+
+		return __hbox;
+	}
+
+	//------------------------------------------------------------------------------------------
+	public addVBoxFromXML (__box:Box, __xml:XSimpleXMLNode):Box {
+		var __vbox:VBox = __box.addGameObjectAsChild (VBox, this.getLayer (), this.getDepth (), false) as VBox;
+		__vbox.afterSetup ([
+			__xml.hasAttribute ("width") ? __xml.getAttributeFloat ("width") : 300,
+			__xml.hasAttribute ("height") ? __xml.getAttributeFloat ("height") : 150,
+			__xml.hasAttribute ("justify") ? __xml.getAttributeString ("justify") : XJustify.SPACE_BETWEEN,
+			__xml.hasAttribute ("fill") ? __xml.getAttributeFloat ("fill") : -1
+		]);
+
+		this.addAndPositionItem (__box, __xml, __vbox);
+
+		return __vbox;
+	}
+
+	//------------------------------------------------------------------------------------------
 	public addSpriteButtonFromXML (__box:Box, __xml:XSimpleXMLNode):void {
 		var __button:XSpriteButton = __box.addGameObjectAsChild (
 			XSpriteButton, this.getLayer (), this.getDepth (), false
@@ -151,7 +155,7 @@ export class XMLBox extends Box {
 			__xml.hasAttribute ("9height") ? __xml.getAttributeFloat ("9height") : 0,
 		]);
 
-		this.addGameObject (__box, __xml, __button);
+		this.addAndPositionItem (__box, __xml, __button);
 	}
 
 	//------------------------------------------------------------------------------------------
@@ -179,13 +183,13 @@ export class XMLBox extends Box {
 			__xml.hasAttribute ("verticalAlignment") ? __xml.getAttributeString ("verticalAlignment") : "center"
 		]);
 
-		this.addGameObject (__box, __xml, __button);
+		this.addAndPositionItem (__box, __xml, __button);
 	}
 
 	//------------------------------------------------------------------------------------------
 	public addTextButtonFromXML (__box:Box, __xml:XSimpleXMLNode):void {
 		var __button:XTextButton = __box.addGameObjectAsChild (
-			XTextButton, 0, 0.0, false
+			XTextButton, this.getLayer (), this.getDepth (), false
 		) as XTextButton;
 
 		__button.afterSetup ([
@@ -204,7 +208,7 @@ export class XMLBox extends Box {
 			__xml.hasAttribute ("verticalAlignment") ? __xml.getAttributeString ("verticalAlignment") : "center"
 		]);
 
-		this.addGameObject (__box, __xml, __button);
+		this.addAndPositionItem (__box, __xml, __button);
 	}
 
 	//------------------------------------------------------------------------------------------
@@ -221,7 +225,7 @@ export class XMLBox extends Box {
 			__xml.hasAttribute ("scaleY") ? __xml.getAttributeFloat ("scaleY") : 1.0,
 		]);
 
-		this.addGameObject (__box, __xml, __gameObject);
+		this.addAndPositionItem (__box, __xml, __gameObject);
 	}
 
 	//------------------------------------------------------------------------------------------
@@ -234,7 +238,7 @@ export class XMLBox extends Box {
 			__xml.hasAttribute ("scaleY") ? __xml.getAttributeFloat ("scaleY") : 1.0,
 		]);
 
-		this.addGameObject (__box, __xml, __gameObject);
+		this.addAndPositionItem (__box, __xml, __gameObject);
 	}
 
     //------------------------------------------------------------------------------------------

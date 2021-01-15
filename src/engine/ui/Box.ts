@@ -14,7 +14,7 @@ export class Box extends XGameObject {
     public m_width:number;
     public m_height:number;
     public m_justify:string;
-    public m_fill:number;
+    public m_fillColor:number;
     public m_spacing:number;
     public m_padding:number;
     public m_topPadding:number;
@@ -22,6 +22,7 @@ export class Box extends XGameObject {
     public m_leftPadding:number;
     public m_rightPadding:number;
     public m_items:Array<PIXI.Sprite | TextInput>;
+    public m_fill:PIXI.Graphics;
 
 //------------------------------------------------------------------------------------------
 	public constructor () {
@@ -44,7 +45,7 @@ export class Box extends XGameObject {
         this.m_width = __params[this.m_paramIndex++];
         this.m_height = __params[this.m_paramIndex++];
         this.m_justify = __params[this.m_paramIndex++];
-        this.m_fill = __params[this.m_paramIndex++];
+        this.m_fillColor = __params[this.m_paramIndex++];
 
         this.m_spacing = 0;
         this.m_padding = 0;
@@ -52,6 +53,8 @@ export class Box extends XGameObject {
         this.m_rightPadding = 0;
         this.m_topPadding = 0;
         this.m_bottomPadding = 0;
+
+        this.createFill ();
 
         return this;
     }
@@ -69,6 +72,19 @@ export class Box extends XGameObject {
 //------------------------------------------------------------------------------------------
     public get height ():number {
         return this.m_height;
+    }
+
+//------------------------------------------------------------------------------------------
+    public createFill ():void {
+        if (this.m_fillColor != -1) {
+            this.m_fill = new PIXI.Graphics ();
+
+            this.m_fill.beginFill (this.m_fillColor);
+            this.m_fill.drawRect (0, 0, this.m_width, this.m_height);
+            this.m_fill.endFill ();
+
+            this.addSortableChild (this.m_fill, this.getLayer (), this.getDepth () - 1, true);
+        }
     }
 
 //------------------------------------------------------------------------------------------
