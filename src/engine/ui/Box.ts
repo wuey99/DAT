@@ -89,7 +89,7 @@ export class Box extends XGameObject {
     }
 
 //------------------------------------------------------------------------------------------
-    public addItem (__item:PIXI.Sprite | TextInput, __layer:number = -1, __depth:number = -1, __visible:boolean = false):void {
+    public addItem (__item:PIXI.Sprite | TextInput):void {
         this.m_items.push (__item);
 
         this.reorder ();
