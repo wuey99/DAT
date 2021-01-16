@@ -85,8 +85,8 @@ export class XMLBox extends Box {
 	}
 
 	//------------------------------------------------------------------------------------------
-	private addAndPositionItem (__box:Box, __xml:XSimpleXMLNode, __gameObject:XGameObject):void {
-		__box.addItem (__gameObject);
+	private addItemToBox (__box:Box, __xml:XSimpleXMLNode, __gameObject:XGameObject):void {
+		__box.addItem (__gameObject, __xml.hasAttribute ("id") ? __xml.getAttributeString ("id") : "");
 
 		if (__xml.hasAttribute ("x")) {
 			var __x:number = this.getPercent (__xml.getAttributeString ("x"));
@@ -119,7 +119,7 @@ export class XMLBox extends Box {
 			__xml.hasAttribute ("fill") ? __xml.getAttributeFloat ("fill") : -1
 		]);
 
-		this.addAndPositionItem (__box, __xml, __hbox);
+		this.addItemToBox (__box, __xml, __hbox);
 
 		return __hbox;
 	}
@@ -134,7 +134,7 @@ export class XMLBox extends Box {
 			__xml.hasAttribute ("fill") ? __xml.getAttributeFloat ("fill") : -1
 		]);
 
-		this.addAndPositionItem (__box, __xml, __vbox);
+		this.addItemToBox (__box, __xml, __vbox);
 
 		return __vbox;
 	}
@@ -155,7 +155,7 @@ export class XMLBox extends Box {
 			__xml.hasAttribute ("9height") ? __xml.getAttributeFloat ("9height") : 0,
 		]);
 
-		this.addAndPositionItem (__box, __xml, __button);
+		this.addItemToBox (__box, __xml, __button);
 	}
 
 	//------------------------------------------------------------------------------------------
@@ -183,7 +183,7 @@ export class XMLBox extends Box {
 			__xml.hasAttribute ("verticalAlignment") ? __xml.getAttributeString ("verticalAlignment") : "center"
 		]);
 
-		this.addAndPositionItem (__box, __xml, __button);
+		this.addItemToBox (__box, __xml, __button);
 	}
 
 	//------------------------------------------------------------------------------------------
@@ -208,7 +208,7 @@ export class XMLBox extends Box {
 			__xml.hasAttribute ("verticalAlignment") ? __xml.getAttributeString ("verticalAlignment") : "center"
 		]);
 
-		this.addAndPositionItem (__box, __xml, __button);
+		this.addItemToBox (__box, __xml, __button);
 	}
 
 	//------------------------------------------------------------------------------------------
@@ -227,7 +227,7 @@ export class XMLBox extends Box {
 			__xml.hasAttribute ("scaleY") ? __xml.getAttributeFloat ("scaleY") : 1.0,
 		]);
 
-		this.addAndPositionItem (__box, __xml, __gameObject);
+		this.addItemToBox (__box, __xml, __gameObject);
 	}
 
 	//------------------------------------------------------------------------------------------
@@ -242,7 +242,7 @@ export class XMLBox extends Box {
 			__xml.hasAttribute ("scaleY") ? __xml.getAttributeFloat ("scaleY") : 1.0,
 		]);
 
-		this.addAndPositionItem (__box, __xml, __gameObject);
+		this.addItemToBox (__box, __xml, __gameObject);
 	}
 
     //------------------------------------------------------------------------------------------

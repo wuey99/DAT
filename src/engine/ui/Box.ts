@@ -23,6 +23,7 @@ export class Box extends XGameObject {
     public m_leftPadding:number;
     public m_rightPadding:number;
     public m_items:Array<PIXI.Sprite | TextInput>;
+    public m_idToItem:Map<string, PIXI.Sprite | TextInput>;
     public m_fill:PIXI.Graphics;
 
 //------------------------------------------------------------------------------------------
@@ -35,6 +36,7 @@ export class Box extends XGameObject {
         super.setup (__world, __layer, __depth);
 
         this.m_items = new Array<PIXI.Sprite | TextInput> ();
+        this.m_idToItem = new Map<string, PIXI.Sprite | TextInput> ();
         
         return this;
     }
@@ -89,10 +91,16 @@ export class Box extends XGameObject {
     }
 
 //------------------------------------------------------------------------------------------
-    public addItem (__item:PIXI.Sprite | TextInput):void {
+    public addItem (__item:PIXI.Sprite | TextInput, __id:string = ""):void {
         this.m_items.push (__item);
+        this.m_idToItem.set (__id, __item);
 
         this.reorder ();
+    }
+
+//------------------------------------------------------------------------------------------
+    public getItemById (__id:string = ""):PIXI.Sprite | TextInput  {
+        return this.m_idToItem.get (__id);
     }
 
 //------------------------------------------------------------------------------------------
@@ -109,6 +117,14 @@ export class Box extends XGameObject {
             }
 
             this.m_items.splice (__index, 1);
+
+            XType.forEach (this.m_idToItem,
+                (__id:string) => {
+                    if (this.m_idToItem.get (__id) == __item) {
+                        this.m_idToItem.delete (__id);
+                    }
+                }
+            );
         }
     }
 
