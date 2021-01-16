@@ -8,6 +8,7 @@ import { XSignal } from '../signals/XSignal';
 import { XApp } from '../app/XApp';
 import { XType } from '../type/XType';
 import { TextInput } from 'pixi-textinput-v5';
+import { XSimpleXMLNode } from '../../engine/xml/XSimpleXMLNode';
 
 //------------------------------------------------------------------------------------------
 export class Box extends XGameObject {
@@ -130,6 +131,36 @@ export class Box extends XGameObject {
     public reorder ():void {
     }
 
+	//------------------------------------------------------------------------------------------
+	public getBoxLayer (__xml:XSimpleXMLNode):number {
+		var __layer:number;
+
+		if (__xml.hasAttribute ("layer")) {
+			__layer = __xml.getAttributeInt ("layer");
+		} else {
+			__layer = this.getLayer ();
+		}
+
+		return __layer;
+	}
+
+	//------------------------------------------------------------------------------------------
+	public getBoxDepth (__xml:XSimpleXMLNode):number {
+		var __depth:number;
+
+		if (__xml.hasAttribute ("depth")) {
+			__depth = __xml.getAttributeFloat ("depth");
+		} else {
+			__depth = this.getDepth ();
+		}
+
+		if (__xml.hasAttribute ("depth+")) {
+			__depth += __xml.getAttributeFloat ("depth+");
+		}
+
+		return __depth;
+    }
+    
 //------------------------------------------------------------------------------------------
     public getActualWidth ():number {
         return this.m_width - this.m_leftPadding - this.m_rightPadding;

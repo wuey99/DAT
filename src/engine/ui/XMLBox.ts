@@ -111,7 +111,7 @@ export class XMLBox extends Box {
 
 	//------------------------------------------------------------------------------------------
 	public addHBoxFromXML (__box:Box, __xml:XSimpleXMLNode):Box {
-		var __hbox:HBox = __box.addGameObjectAsChild (HBox, this.getLayer (), this.getDepth (), false) as HBox;
+		var __hbox:HBox = __box.addGameObjectAsChild (HBox, __box.getBoxLayer (__xml), __box.getBoxDepth (__xml), false) as HBox;
 		__hbox.afterSetup ([
 			__xml.hasAttribute ("width") ? __xml.getAttributeFloat ("width") : 300,
 			__xml.hasAttribute ("height") ? __xml.getAttributeFloat ("height") : 150,
@@ -126,7 +126,7 @@ export class XMLBox extends Box {
 
 	//------------------------------------------------------------------------------------------
 	public addVBoxFromXML (__box:Box, __xml:XSimpleXMLNode):Box {
-		var __vbox:VBox = __box.addGameObjectAsChild (VBox, this.getLayer (), this.getDepth (), false) as VBox;
+		var __vbox:VBox = __box.addGameObjectAsChild (VBox, __box.getBoxLayer (__xml), __box.getBoxDepth (__xml), false) as VBox;
 		__vbox.afterSetup ([
 			__xml.hasAttribute ("width") ? __xml.getAttributeFloat ("width") : 300,
 			__xml.hasAttribute ("height") ? __xml.getAttributeFloat ("height") : 150,
@@ -142,7 +142,7 @@ export class XMLBox extends Box {
 	//------------------------------------------------------------------------------------------
 	public addSpriteButtonFromXML (__box:Box, __xml:XSimpleXMLNode):void {
 		var __button:XSpriteButton = __box.addGameObjectAsChild (
-			XSpriteButton, this.getLayer (), this.getDepth (), false
+			XSpriteButton, __box.getBoxLayer (__xml), __box.getBoxDepth (__xml), false
 		) as XSpriteButton;
 
 		console.log (": addSpriteButtonFromXML: ", __xml.attributes ());
@@ -161,7 +161,7 @@ export class XMLBox extends Box {
 	//------------------------------------------------------------------------------------------
 	public addTextSpriteButtonFromXML (__box:Box, __xml:XSimpleXMLNode):void {
 		var __button:XTextSpriteButton = __box.addGameObjectAsChild (
-			XTextSpriteButton, this.getLayer (), this.getDepth (), false
+			XTextSpriteButton, __box.getBoxLayer (__xml), __box.getBoxDepth (__xml), false
 		) as XTextSpriteButton;
 
 		__button.afterSetup ([
@@ -189,7 +189,7 @@ export class XMLBox extends Box {
 	//------------------------------------------------------------------------------------------
 	public addTextButtonFromXML (__box:Box, __xml:XSimpleXMLNode):void {
 		var __button:XTextButton = __box.addGameObjectAsChild (
-			XTextButton, this.getLayer (), this.getDepth (), false
+			XTextButton, __box.getBoxLayer (__xml), __box.getBoxDepth (__xml), false
 		) as XTextButton;
 
 		__button.afterSetup ([
@@ -217,7 +217,9 @@ export class XMLBox extends Box {
 
 	//------------------------------------------------------------------------------------------
 	public addAnimatedSpriteFromXML (__box:Box, __xml:XSimpleXMLNode):void {
-		var __gameObject:XGameObject = __box.addGameObjectAsChild (XMLAnimatedSprite, this.getLayer (), this.getDepth (), false) as XMLAnimatedSprite;
+		var __gameObject:XGameObject = __box.addGameObjectAsChild (
+			XMLAnimatedSprite, __box.getBoxLayer (__xml), __box.getBoxDepth (__xml), false
+		) as XMLAnimatedSprite;
 
 		__gameObject.afterSetup ([
 			__xml.getAttributeString ("className"),
@@ -230,7 +232,9 @@ export class XMLBox extends Box {
 
 	//------------------------------------------------------------------------------------------
 	public addSpriteFromXML (__box:Box, __xml:XSimpleXMLNode):void {
-		var __gameObject:XGameObject = __box.addGameObjectAsChild (XMLSprite, this.getLayer (), this.getDepth (), false) as XMLSprite;
+		var __gameObject:XGameObject = __box.addGameObjectAsChild (
+			XMLSprite, __box.getBoxLayer (__xml), __box.getBoxDepth (__xml), false
+		) as XMLSprite;
 
 		__gameObject.afterSetup ([
 			__xml.getAttributeString ("className"),
