@@ -48,7 +48,7 @@ export class Box extends XGameObject {
         this.m_width = __params[this.m_paramIndex++];
         this.m_height = __params[this.m_paramIndex++];
         this.m_justify = __params[this.m_paramIndex++];
-        this.m_fillColor = __params[this.m_paramIndex++];
+        this.m_fillColor = this.m_paramIndex < __params.length ?__params[this.m_paramIndex++] : -1;
 
         this.m_spacing = 0;
         this.m_padding = 0;
