@@ -111,7 +111,11 @@ import { XType } from "../../engine/type/XType";
 
                 case MessagingManager.SCENECHANGE_SIGNAL:
                     if (this.m_sceneChangeSignal.has (__userId)) {
-                        this.m_sceneChangeSignal.get (__userId).fireSignal ();
+                        var __params:SFS2X.SFSEvent = e.data;
+
+                        this.m_sceneChangeSignal.get (__userId).fireSignal (
+                            __params.getUtfString ("stateName"),
+                            __params.getUtfString ("xmlBoxString")                        );
                     }
                 
                     break;
@@ -161,10 +165,15 @@ import { XType } from "../../engine/type/XType";
         }
 
     //------------------------------------------------------------------------------------------
-        public fireSceneChangeSignal (__userId:number, __message:string, __object:SFS2X.SFSObject):void {
+        public fireSceneChangeSignal (__userId:number, __stateName:string, __xmlBoxString:string, __object:SFS2X.SFSObject = null):void {
             this.fireSignal (__userId,
                 (__userId:number) => {
-                    SFSManager.instance ().send (new SFS2X.PrivateMessageRequest (MessagingManager.SCENECHANGE_SIGNAL, __userId));
+                    var __params:SFS2X.SFSObject = new SFS2X.SFSObject ();
+
+                    __params.putUtfString ("stateName", __stateName);
+                    __params.putUtfString ("xmlBoxString", __xmlBoxString);
+
+                    SFSManager.instance ().send (new SFS2X.PrivateMessageRequest (MessagingManager.SCENECHANGE_SIGNAL, __userId, __params));
                 }
             );
         }

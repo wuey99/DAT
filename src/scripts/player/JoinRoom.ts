@@ -275,9 +275,16 @@ export class JoinRoom extends DATState {
 		this.horizontalPercent (__waitMessage, 0.50);
 		this.verticalPercent (__waitMessage, 0.50);
 
-		MessagingManager.instance ().addSceneChangeListener (MessagingManager.instance ().getModeratorID (), () => {
-			console.log (": all joined: ");
-		});
+		MessagingManager.instance ().addSceneChangeListener (
+			MessagingManager.instance ().getModeratorID (),
+			(__stateName:string, __xmlBoxString:string) => {
+				console.log (": all joined: ", __stateName, __stateName == "", __xmlBoxString);
+
+				__stateName = (__stateName == "" ? "RoomScene" : __stateName);
+
+				this.getGameInstance ().gotoState (__stateName, [__xmlBoxString]);
+			}
+		);
 
 		//------------------------------------------------------------------------------------------
 		this.script.gotoTask ([
