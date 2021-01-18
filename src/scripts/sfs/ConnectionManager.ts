@@ -143,7 +143,7 @@ export class ConnectionManager extends XGameObject {
 						SFSManager.instance ().setup ();
                         
 						SFSManager.instance ().connect (
-							"127.0.0.1", 8080,
+							SFSManager.SFS2X_SERVER, 8080,
 							(e:SFS2X.SFSEvent) => {
 								console.log (": ----------------->: connected: ");
 				
