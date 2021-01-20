@@ -165,7 +165,7 @@ import { XType } from "../../engine/type/XType";
         }
 
     //------------------------------------------------------------------------------------------
-        public fireSceneChangeSignal (__userId:number, __stateName:string, __xmlBoxString:string, __object:SFS2X.SFSObject = null):void {
+        public fireSceneChangeSignal (__userId:number, __stateName:string, __xmlBoxString:string):void {
             this.fireSignal (__userId,
                 (__userId:number) => {
                     var __params:SFS2X.SFSObject = new SFS2X.SFSObject ();
