@@ -16,6 +16,7 @@ import { XGameController } from '../../engine/state/XGameController';
 import { Login } from './Login';
 import { XSimpleXMLNode } from '../../engine/xml/XSimpleXMLNode';
 import { CreateRoom } from '../moderator/CreateRoom';
+import { AudioTest } from '../moderator/AudioTest';
 import { JoinRoom } from '../player/JoinRoom';
 import { RoomScene } from '../scene/RoomScene';
 import { DATGameInstance } from './DATGameInstance';
@@ -43,6 +44,7 @@ export class DATGameController extends XGameController {
 		this.getGameInstance ().registerState ("CreateRoom", CreateRoom);
 		this.getGameInstance ().registerState ("JoinRoom", JoinRoom);
 		this.getGameInstance ().registerState ("RoomScene", RoomScene);
+		this.getGameInstance ().registerState ("AudioTest", AudioTest);
 
 		this.createBitmapFont (
 			"Nunito",

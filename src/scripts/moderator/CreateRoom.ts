@@ -32,6 +32,7 @@ import { XJustify } from '../../engine/ui/XJustify';
 import { Spacer } from '../../engine/ui/Spacer';
 import { FlockLeader } from '../test/FlockLeader';
 import { MessagingManager } from '../sfs/MessagingManager';
+import { MessagingSubManager } from '../sfs/MessagingSubManager';
 
 //------------------------------------------------------------------------------------------
 export class CreateRoom extends DATState {
@@ -41,6 +42,7 @@ export class CreateRoom extends DATState {
 	public m_createRoomLayout:HBox;
 	public m_waitJoinLayout:HBox;
 	public m_joinedUsersLayout:VBox;
+	public m_messagingSubManager:MessagingSubManager;
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -58,6 +60,8 @@ export class CreateRoom extends DATState {
 	public afterSetup (__params:Array<any> = null):XGameObject {
         super.afterSetup (__params);
 	
+		this.m_messagingSubManager = new MessagingSubManager ();
+
 		this.script = this.addEmptyTask ();
 
 		this.createStatusMessage ();
@@ -75,7 +79,9 @@ export class CreateRoom extends DATState {
 
 //------------------------------------------------------------------------------------------
 	public cleanup ():void {
-        super.cleanup ();
+		super.cleanup ();
+		
+		this.m_messagingSubManager.cleanup ();
 	}
 	
 //------------------------------------------------------------------------------------------
@@ -287,7 +293,7 @@ export class CreateRoom extends DATState {
 
 	//------------------------------------------------------------------------------------------
 	public collectUsers (__userMap:Map<SFS2X.SFSUser, number>, __userList:Array<SFS2X.SFSUser>):void {
-		var __user:SFS2X.FSUser;
+		var __user:SFS2X.SFSUser;
 
 		for (__user of __userList) {
 			__userMap.set (__user, 0);
@@ -375,6 +381,8 @@ export class CreateRoom extends DATState {
 
 	//------------------------------------------------------------------------------------------
 	public WaitToStart_Script ():void {
+		var __started:boolean = false;
+
 		var __startButton:XTextSpriteButton = this.m_waitJoinLayout.addGameObjectAsChild (XTextSpriteButton, 0, 0.0, false) as XTextSpriteButton;
 		__startButton.afterSetup ([
 			"StandardButton",
@@ -397,6 +405,8 @@ export class CreateRoom extends DATState {
 		__startButton.addMouseUpListener (() => {
 			__startButton.setDisabled (true);
 
+			__started = true;
+	
 			MessagingManager.instance ().fireSceneChangeSignal (
 				MessagingManager.ALL_PLAYERS,
 				"",
@@ -415,7 +425,73 @@ export class CreateRoom extends DATState {
 					XTask.LABEL, "loop",
 						XTask.WAIT, 0x0100,
 
-						XTask.GOTO, "loop",
+						XTask.FLAGS, (__task:XTask) => {
+							__task.ifTrue (__started);
+						}, XTask.BNE, "loop",
+
+						() => {
+							this.WaitForAllPlayersReady_Script ();
+						},
+
+					XTask.RETN,
+				]);	
+			},
+				
+			//------------------------------------------------------------------------------------------
+			// animation
+			//------------------------------------------------------------------------------------------	
+			XTask.LABEL, "loop",
+                XTask.WAIT, 0x0100,
+					
+				XTask.GOTO, "loop",
+				
+			XTask.RETN,
+				
+			//------------------------------------------------------------------------------------------			
+		]);
+			
+	//------------------------------------------------------------------------------------------
+	}
+
+	//------------------------------------------------------------------------------------------
+	public WaitForAllPlayersReady_Script ():void {
+		var __userList:Array<SFS2X.SFSUser> = ConnectionManager.instance ().getSFSUserManager ().getUserList ();
+
+		var __readyUserCount:number = 0;
+		var __totalUserCount:number = 0;
+
+		var __user:SFS2X.SFSUser;
+
+		for (__user of __userList) {
+			if (!__user.isItMe) {
+				this.m_messagingSubManager.addReadyListener (__user.id, () => {
+					console.log (": user ready: ", __user);
+
+					__readyUserCount++;
+				});
+
+				__totalUserCount++;
+			}
+		}
+
+		//------------------------------------------------------------------------------------------
+		this.script.gotoTask ([
+				
+			//------------------------------------------------------------------------------------------
+			// control
+			//------------------------------------------------------------------------------------------
+			() => {
+				this.script.addTask ([
+					XTask.LABEL, "loop",
+						XTask.WAIT, 0x0100,
+
+						XTask.FLAGS, (__task:XTask) => {
+							__task.ifTrue (__readyUserCount == __totalUserCount);
+						}, XTask.BNE, "loop",
+
+						() => {
+							this.getGameInstance ().gotoState ("AudioTest");
+						},
 
 					XTask.RETN,
 				]);	

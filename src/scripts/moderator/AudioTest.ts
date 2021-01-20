@@ -28,18 +28,12 @@ import { Spacer } from '../../engine/ui/Spacer';
 import { ConnectionManager } from '../sfs/ConnectionManager';
 import { XType } from '../../engine/type/XType';
 import { G } from '../../engine/app/G';
-import { DATState } from './DATState';
+import { DATState } from '../scene/DATState';
 import { XMLBox } from '../../engine/ui/XMLBox';
-import { MessagingManager } from '../sfs/MessagingManager';
-import { MessagingSubManager } from '../sfs/MessagingSubManager';
 
 //------------------------------------------------------------------------------------------
-export class RoomScene extends DATState {
+export class AudioTest extends DATState {
 	public script:XTask;
-
-	public m_xmlBox:XSimpleXMLNode;
-
-	public m_messagingSubManager:MessagingSubManager;
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -57,42 +51,7 @@ export class RoomScene extends DATState {
 	public afterSetup (__params:Array<any> = null):XGameObject {
         super.afterSetup (__params);
 
-		var __xmlString:string = __params[0];
-
-		console.log (": xmlString: ", __xmlString);
-
-		this.m_messagingSubManager = new MessagingSubManager ();
-
-		var __xmlbox:XMLBox = this.addGameObjectAsChild (XMLBox, 0, 0.0, false) as XMLBox;
-		__xmlbox.afterSetup ([
-			1500, 1090, XJustify.NONE, 0xc0c0c0,
-			"<XMLBox>\n\t<VBox x=\"50%\" y=\"50%\" width=\"1000\" height=\"500\" depth+=\"500\" justify=\"space-between\" fill=\"0xffa0a0\">\n\t\t<TextSpriteButton\n\t\t\tx=\"50%\"\n\t\t\tbuttonClassName=\"StandardButton\"\n\t\t\t9slice=\"true\"\n\t\t\t9width=\"200\"\n\t\t\t9height=\"50\"\n\t\t\ttext=\"hellew\"\n\t\t\tfontName=\"Nunito\"\n\t\t\tfontSize=\"30\"\n\t\t\tcolorNormal=\"0x000000\"\n\t\t\tcolorOver=\"0x00ff00\"\n\t\t\tcolorDown=\"0x0000ff\"\n\t\t\tcolorSelected=\"0xff0000\"\n\t\t\tcolorDisabled=\"0xc0c0c0\"\n\t\t\tbold=\"true\"\n\t\t\thorizontAlignment=\"center\"\n\t\t\tverticalAlignment=\"center\"\n\t\t/>\n\t\t<TextButton\n\t\t\tx=\"50%\"\n\t\t\twidth=\"200\"\n\t\t\theight=\"50\"\n\t\t\ttext=\"hellew\"\n\t\t\tfontName=\"Nunito\"\n\t\t\tfontSize=\"30\"\n\t\t\tcolorNormal=\"0x000000\"\n\t\t\tcolorOver=\"0x00ff00\"\n\t\t\tcolorDown=\"0x0000ff\"\n\t\t\tcolorSelected=\"0xff0000\"\n\t\t\tcolorDisabled=\"0xc0c0c0\"\n\t\t\tbold=\"true\"\n\t\t\thorizontAlignment=\"center\"\n\t\t\tverticalAlignment=\"center\"\n\t\t/>\n\t\t<SpriteButton\n\t\t\tx=\"50%\"\n\t\t\tbuttonClassName=\"TestButton\"\n\t\t\t9slice=\"true\"\n\t\t\t9width=\"200\"\n\t\t\t9height=\"50\"\n\t\t/>\n\t</VBox>\n\t<AnimatedSprite\n\t\tx=\"25%\" y=\"25%\"\n\t\tclassName=\"TestImage\"\n\t/>\n</XMLBox>\n"
-
-		]);
-
-		this.horizontalPercent (__xmlbox, 0.50);
-		this.verticalPercent (__xmlbox, 0.50);
-
-		MessagingManager.instance ().fireReadySignal (MessagingManager.MODERATOR);
-
-		this.m_messagingSubManager.addTriggerListener (
-			MessagingManager.instance ().getModeratorID (),
-			(__triggerName:string, __params:SFS2X.SFSObject) => {
-				/*
-				this.world.getMusicSoundManager ().playSoundFromName ("Player1Audio",
-					1.0, 999, 0.20,
-					() => {
-						console.log (": BGM: start: ");
-					},
-					() => {
-						console.log (": BGM: end: ");
-					}
-				);
-				*/
-				
-				console.log (": triggered: ", __triggerName, __params);
-			}
-		);
+		this.setupUI ();
 
 		return this;
 	}
@@ -100,9 +59,60 @@ export class RoomScene extends DATState {
 //------------------------------------------------------------------------------------------
 	public cleanup ():void {
 		super.cleanup ();
-
-		this.m_messagingSubManager.cleanup ();
     }
-    
+	
+//------------------------------------------------------------------------------------------
+	public setupUI ():void {
+		var __vbox:VBox = this.addGameObjectAsChild (VBox, 0, 0.0, false) as VBox;
+		__vbox.afterSetup ([500, 500, XJustify.START, 0xa0a0a0]);
+
+		var __player1Button:XTextSpriteButton = __vbox.addGameObjectAsChild (XTextSpriteButton, 0, 0.0, false) as XTextSpriteButton;
+		__player1Button.afterSetup ([
+			"StandardButton",
+			true, 10, 259, 60,
+			"PLAYER 1 AUDIO",
+			"Nunito",
+			25,
+			0x000000,
+			0x000000,
+			0x000000,
+			0x000000,
+			0x000000,
+			false,
+			"center", "center"
+		]);
+		__vbox.addItem (__player1Button);
+		__vbox.horizontalPercent (__player1Button, 0.50);
+
+		var __player2Button:XTextSpriteButton = __vbox.addGameObjectAsChild (XTextSpriteButton, 0, 0.0, false) as XTextSpriteButton;
+		__player2Button.afterSetup ([
+			"StandardButton",
+			true, 10, 259, 60,
+			"PLAYER 2 AUDIO",
+			"Nunito",
+			25,
+			0x000000,
+			0x000000,
+			0x000000,
+			0x000000,
+			0x000000,
+			false,
+			"center", "center"
+		]);
+		__vbox.addItem (__player2Button);
+		__vbox.horizontalPercent (__player2Button, 0.50);
+
+		this.horizontalPercent (__vbox, 0.50);
+		this.verticalPercent (__vbox, 0.50);
+
+		__player1Button.addMouseUpEventListener (() => {
+
+		});
+
+		__player2Button.addMouseUpEventListener (() => {
+
+		});
+	}
+	
 //------------------------------------------------------------------------------------------
 }

@@ -229,8 +229,32 @@ export class Main {
                 */
             },
             () => {
+                this.queueTestResources ();
+
                 g_XApp.getXProjectManager ().loadCowResources ();
             }
         );
     }
+
+//------------------------------------------------------------------------------------------
+public queueTestResources ():void {
+            
+    //------------------------------------------------------------------------------------------
+    g_XApp.getXProjectManager ().queueResources ([
+
+        //------------------------------------------------------------------------------------------
+        // common music
+        //------------------------------------------------------------------------------------------
+        {
+            name: "Player1Audio",
+            type: "MusicResource",
+            path: "audio/DAT_HoFG_TUTORIAL_INTRODUCTION_RIGHTANSWER_INTROA.mp3"
+        },
+        {
+            name: "Player2Audio",
+            type: "MusicResource",
+            path: "audio/DAT_HoFG_TUTORIAL_INTRODUCTION_WRONGANSWER_INTROB.mp3"
+        },
+    ], "Common");
+}
 }

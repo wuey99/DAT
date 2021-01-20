@@ -26,6 +26,7 @@ import { XType } from "../../engine/type/XType";
 
         public static ALL_PLAYERS:number = -1;
         public static ALL_IN_ROOM:number = -2;
+        public static MODERATOR:number = -3;
 
     //------------------------------------------------------------------------------------------
         public static instance ():MessagingManager {
@@ -104,7 +105,9 @@ import { XType } from "../../engine/type/XType";
 
                 case MessagingManager.TRIGGER_SIGNAL:
                     if (this.m_triggerSignal.has (__userId)) {
-                        this.m_triggerSignal.get (__userId).fireSignal ();
+                        var __params:SFS2X.SFSEvent = e.data;
+
+                        this.m_triggerSignal.get (__userId).fireSignal (__params.getUtfString ("__triggerName__"), __params);
                     }
 
                     break;
@@ -115,7 +118,8 @@ import { XType } from "../../engine/type/XType";
 
                         this.m_sceneChangeSignal.get (__userId).fireSignal (
                             __params.getUtfString ("stateName"),
-                            __params.getUtfString ("xmlBoxString")                        );
+                            __params.getUtfString ("xmlBoxString")
+                        );
                     }
                 
                     break;
@@ -138,6 +142,11 @@ import { XType } from "../../engine/type/XType";
         }
 
     //------------------------------------------------------------------------------------------
+    public getUserManager ():SFS2X.SFSRoomManager {
+        this.m_sfsUserManager;
+    }
+
+    //------------------------------------------------------------------------------------------
         public fireReadySignal (__userId:number):void {
             this.fireSignal (__userId,
                 (__userId:number) => {
@@ -156,10 +165,72 @@ import { XType } from "../../engine/type/XType";
         }
 
     //------------------------------------------------------------------------------------------
-        public fireTriggerSignal (__userId:number, __message:string, __object:SFS2X.SFSObject):void {
+        private serializeToSFSObject (__object:SFS2X.SFSObject, __params:any):SFS2X.SFSObject {
+            var __paramName:string;
+
+            for (__paramName in __params) {
+                switch (typeof __params[__paramName]) {
+                    case "string":
+                        __object.putUtfString (__paramName, __params[__paramName]);
+
+                        break;
+
+                    case "number":
+                        __object.putFloat (__paramName, __params[__paramName]);
+
+                        break;
+
+                    case "boolean":
+                            __object.putBoolean (__paramName, __params[__paramName]);
+
+                        break;
+
+                    case "object":
+                        if (Array.isArray (__params[__paramName])) {
+                            var __type:string = typeof __params[0];
+
+                            switch (typeof __type) {
+                                case "string":
+                                    __object.putUtfStringArray (__paramName, __params);
+                
+                                    break;
+                
+                                case "number":
+                                    __object.putFloatArray (__paramName, __params);
+                
+                                    break;
+                
+                                case "boolean":
+                                    __object.putBooleanArray (__paramName, __params);
+                
+                                    break;
+                            }
+                        } else {
+                            __object.putSFSObject (__paramName, this.serializeToSFSObject (new SFS2X.SFSObject (), __params[__paramName]));
+                        }
+
+                        break;
+                }
+            }
+
+            return __object;
+        }
+
+    //------------------------------------------------------------------------------------------
+        public fireTriggerSignal (__userId:number, __triggerName:string, __params:any):void {
+            var __object:SFS2X.SFSObject;
+
+            if (__params instanceof SFS2X.SFSObject) {
+                __object = __params as SFS2X.SFSObject;
+            } else {
+                __object = this.serializeToSFSObject (new SFS2X.SFSObject (), __params);
+            }
+
+            __object.putUtfString ("__triggerName__", __triggerName);
+
             this.fireSignal (__userId,
                 (__userId:number) => {
-                    SFSManager.instance ().send (new SFS2X.PrivateMessageRequest (MessagingManager.TRIGGER_SIGNAL, __userId));
+                    SFSManager.instance ().send (new SFS2X.PrivateMessageRequest (MessagingManager.TRIGGER_SIGNAL, __userId, __object));
                 }
             );
         }
@@ -200,6 +271,15 @@ import { XType } from "../../engine/type/XType";
                         }
                     }
 
+                    break;
+
+                case MessagingManager.MODERATOR:
+                    for (__user of __userList) {
+                        if (!__user.isItMe && __user.name.startsWith ("moderator:")) {
+                            __callback (__user.id);
+                        }
+                    }
+    
                     break;
 
                 default:

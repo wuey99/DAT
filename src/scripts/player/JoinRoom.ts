@@ -38,6 +38,7 @@ export class JoinRoom extends DATState {
 	public m_joinRoomButton:XTextSpriteButton;
 	public script:XTask;
 	public m_mainUI:HBox;
+	public m_messagingSubManager:MessagingSubManager;
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -57,6 +58,8 @@ export class JoinRoom extends DATState {
 	
 		this.script = this.addEmptyTask ();
 
+		this.m_messagingSubManager = new MessagingSubManager ();
+
 		this.createStatusMessage ();
 
 		this.setupUI ();
@@ -68,7 +71,9 @@ export class JoinRoom extends DATState {
 
 //------------------------------------------------------------------------------------------
 	public cleanup ():void {
-        super.cleanup ();
+		super.cleanup ();
+		
+		this.m_messagingSubManager.cleanup ();
 	}
 	
 //------------------------------------------------------------------------------------------
@@ -275,7 +280,7 @@ export class JoinRoom extends DATState {
 		this.horizontalPercent (__waitMessage, 0.50);
 		this.verticalPercent (__waitMessage, 0.50);
 
-		MessagingManager.instance ().addSceneChangeListener (
+		this.m_messagingSubManager.addSceneChangeListener (
 			MessagingManager.instance ().getModeratorID (),
 			(__stateName:string, __xmlBoxString:string) => {
 				console.log (": all joined: ", __stateName, __stateName == "", __xmlBoxString);
