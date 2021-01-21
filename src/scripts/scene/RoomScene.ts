@@ -75,9 +75,10 @@ export class RoomScene extends DATState {
 			MessagingManager.instance ().getModeratorID (),
 			"PLAY-SOUND",
 			(__params:SFS2X.SFSObject) => {
-				/*
-				this.world.getMusicSoundManager ().playSoundFromName ("Player1Audio",
-					1.0, 999, 0.20,
+				this.world.getMusicSoundManager ().removeAllSounds ();
+
+				this.world.getMusicSoundManager ().playSoundFromName (__params.getUtfString ("name"),
+					1.0, 0.0, 0.33,
 					() => {
 						console.log (": BGM: start: ");
 					},
@@ -85,7 +86,6 @@ export class RoomScene extends DATState {
 						console.log (": BGM: end: ");
 					}
 				);
-				*/
 				
 				console.log (": triggered: ", __params.getUtfString ("name"));
 			}
