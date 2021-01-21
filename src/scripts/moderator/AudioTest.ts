@@ -81,7 +81,8 @@ export class AudioTest extends DATState {
 		
 		var __userListLayout:VBox = __mainLayout.addGameObjectAsChild (VBox, 0, 0.0, false) as VBox;
 		__userListLayout.afterSetup ([1000, 400, XJustify.START, 0xa0a0a0]);
-
+		__userListLayout.spacing = 16;
+		
 		var __user:SFS2X.SFSUser;
 
 		for (__user of __userList) {

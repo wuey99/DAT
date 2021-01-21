@@ -87,7 +87,7 @@ export class RoomScene extends DATState {
 				);
 				*/
 				
-				console.log (": triggered: ", __params);
+				console.log (": triggered: ", __params.getUtfString ("name"));
 			}
 		);
 
