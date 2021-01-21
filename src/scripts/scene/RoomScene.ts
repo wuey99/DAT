@@ -39,8 +39,6 @@ export class RoomScene extends DATState {
 
 	public m_xmlBox:XSimpleXMLNode;
 
-	public m_messagingSubManager:MessagingSubManager;
-
 //------------------------------------------------------------------------------------------	
 	constructor () {
 		super ();
@@ -61,8 +59,6 @@ export class RoomScene extends DATState {
 
 		console.log (": xmlString: ", __xmlString);
 
-		this.m_messagingSubManager = new MessagingSubManager ();
-
 		var __xmlbox:XMLBox = this.addGameObjectAsChild (XMLBox, 0, 0.0, false) as XMLBox;
 		__xmlbox.afterSetup ([
 			1500, 1090, XJustify.NONE, 0xc0c0c0,
@@ -77,7 +73,8 @@ export class RoomScene extends DATState {
 
 		this.m_messagingSubManager.addTriggerListener (
 			MessagingManager.instance ().getModeratorID (),
-			(__triggerName:string, __params:SFS2X.SFSObject) => {
+			"PLAY-SOUND",
+			(__params:SFS2X.SFSObject) => {
 				/*
 				this.world.getMusicSoundManager ().playSoundFromName ("Player1Audio",
 					1.0, 999, 0.20,
@@ -90,7 +87,7 @@ export class RoomScene extends DATState {
 				);
 				*/
 				
-				console.log (": triggered: ", __triggerName, __params);
+				console.log (": triggered: ", __params);
 			}
 		);
 

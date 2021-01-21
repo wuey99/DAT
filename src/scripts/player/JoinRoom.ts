@@ -38,7 +38,6 @@ export class JoinRoom extends DATState {
 	public m_joinRoomButton:XTextSpriteButton;
 	public script:XTask;
 	public m_mainUI:HBox;
-	public m_messagingSubManager:MessagingSubManager;
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -57,8 +56,6 @@ export class JoinRoom extends DATState {
         super.afterSetup (__params);
 	
 		this.script = this.addEmptyTask ();
-
-		this.m_messagingSubManager = new MessagingSubManager ();
 
 		this.createStatusMessage ();
 

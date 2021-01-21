@@ -5,14 +5,14 @@ import { MessagingManager } from './MessagingManager';
 	export class MessagingSubManager {	
 		public m_readySignals:Map<number, number>;
 		public m_completeSignals:Map<number, number>;
-		public m_triggerSignals:Map<number, number>;
+		public m_triggerSignals:Map<number, string>;
 		public m_sceneChangeSignals:Map<number, number>;
 		
 //------------------------------------------------------------------------------------------
 		constructor () {		
 			this.m_readySignals = new Map<number, number> ();
 			this.m_completeSignals = new Map<number, number> ();
-			this.m_triggerSignals = new Map<number, number> ();
+			this.m_triggerSignals = new Map<number, string> ();
 			this.m_sceneChangeSignals = new Map<number, number> ();
 		}
 
@@ -83,18 +83,18 @@ import { MessagingManager } from './MessagingManager';
 		}
 
 //------------------------------------------------------------------------------------------
-		public addTriggerListener (__userId:number, __listener:any):number {
-			var __id:number = MessagingManager.instance ().addTriggerListener (__userId, __listener);
+		public addTriggerListener (__userId:number, __triggerName:string, __listener:any):number {
+			var __id:number = MessagingManager.instance ().addTriggerListener (__userId, __triggerName, __listener);
 
-			this.m_triggerSignals.set (__id, __userId);
+			this.m_triggerSignals.set (__id, __triggerName + __userId);
 
 			return __id;
 		}
 
 //------------------------------------------------------------------------------------------
-		public removeTriggerListener  (__userId:number, __id):void {
+		public removeTriggerListener  (__triggerID:string, __id):void {
 			if (this.m_triggerSignals.has (__id)) {
-				MessagingManager.instance ().removeTriggerListener (__userId, __id);
+				MessagingManager.instance ().removeTriggerListener (__triggerID, __id);
 
 				this.m_triggerSignals.delete (__id);
 			}

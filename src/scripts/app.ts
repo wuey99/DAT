@@ -229,7 +229,7 @@ export class Main {
                 */
             },
             () => {
-                this.queueTestResources ();
+                this.queueTestAudioResources ();
 
                 g_XApp.getXProjectManager ().loadCowResources ();
             }
@@ -237,7 +237,7 @@ export class Main {
     }
 
 //------------------------------------------------------------------------------------------
-public queueTestResources ():void {
+public queueTestAudioResources ():void {
             
     //------------------------------------------------------------------------------------------
     g_XApp.getXProjectManager ().queueResources ([
@@ -246,15 +246,15 @@ public queueTestResources ():void {
         // common music
         //------------------------------------------------------------------------------------------
         {
-            name: "Player1Audio",
+            name: "Audio1",
             type: "MusicResource",
             path: "audio/DAT_HoFG_TUTORIAL_INTRODUCTION_RIGHTANSWER_INTROA.mp3"
         },
         {
-            name: "Player2Audio",
+            name: "Audio2",
             type: "MusicResource",
             path: "audio/DAT_HoFG_TUTORIAL_INTRODUCTION_WRONGANSWER_INTROB.mp3"
         },
-    ], "Common");
+    ], "TestAudio");
 }
 }

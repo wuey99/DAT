@@ -42,7 +42,6 @@ export class CreateRoom extends DATState {
 	public m_createRoomLayout:HBox;
 	public m_waitJoinLayout:HBox;
 	public m_joinedUsersLayout:VBox;
-	public m_messagingSubManager:MessagingSubManager;
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -60,8 +59,6 @@ export class CreateRoom extends DATState {
 	public afterSetup (__params:Array<any> = null):XGameObject {
         super.afterSetup (__params);
 	
-		this.m_messagingSubManager = new MessagingSubManager ();
-
 		this.script = this.addEmptyTask ();
 
 		this.createStatusMessage ();

@@ -78,6 +78,11 @@ export class Box extends XGameObject {
     }
 
 //------------------------------------------------------------------------------------------
+    public set spacing (__value:number) {
+        this.m_spacing = __value;
+    }
+    
+//------------------------------------------------------------------------------------------
     public createFill ():void {
         if (this.m_fillColor != -1) {
             this.m_fill = new PIXI.Graphics ();

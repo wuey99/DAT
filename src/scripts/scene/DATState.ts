@@ -25,11 +25,14 @@ import { TextInput } from 'pixi-textinput-v5';
 import { ConnectionManager } from '../sfs/ConnectionManager';
 import { XType } from '../../engine/type/XType';
 import { G } from '../../engine/app/G';
-import { FlockLeader } from '../test/FlockLeader';
+import { MessagingManager } from '../sfs/MessagingManager';
+import { MessagingSubManager } from '../sfs/MessagingSubManager';
 
 //------------------------------------------------------------------------------------------
 export class DATState extends XState {
 	public script:XTask;
+
+	public m_messagingSubManager:MessagingSubManager;
 
 //------------------------------------------------------------------------------------------	
 	constructor () {
@@ -46,6 +49,8 @@ export class DATState extends XState {
 //------------------------------------------------------------------------------------------
 	public afterSetup (__params:Array<any> = null):XGameObject {
         super.afterSetup (__params);
+
+		this.m_messagingSubManager = new MessagingSubManager ();
 
 		return this;
 	}

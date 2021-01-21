@@ -16,7 +16,7 @@ import { XType } from "../../engine/type/XType";
     
         public m_readySignal:Map<number, XSignal>;
         public m_completeSignal:Map<number, XSignal>;
-        public m_triggerSignal:Map<number, XSignal>;
+        public m_triggerSignal:Map<string, XSignal>;
         public m_sceneChangeSignal:Map<number, XSignal>;
         
         public static READY_SIGNAL:string = "ready";
@@ -49,7 +49,7 @@ import { XType } from "../../engine/type/XType";
 
             this.m_readySignal = new Map<number, XSignal> ();
             this.m_completeSignal = new Map<number, XSignal> ();
-            this.m_triggerSignal = new Map<number, XSignal> ();
+            this.m_triggerSignal = new Map<string, XSignal> ();
             this.m_sceneChangeSignal = new Map<number, XSignal> ();
 
             SFSManager.instance ().addEventListener (SFS2X.SFSEvent.PRIVATE_MESSAGE, this.onPrivateMessage.bind (this));
@@ -70,8 +70,8 @@ import { XType } from "../../engine/type/XType";
             );
 
             XType.forEach (this.m_triggerSignal,
-                (__userId:number) => {
-                    this.m_triggerSignal.get (__userId).removeAllListeners ();
+                (__triggerID:string) => {
+                    this.m_triggerSignal.get (__triggerID).removeAllListeners ();
                 }
             );
 
@@ -104,10 +104,11 @@ import { XType } from "../../engine/type/XType";
                     break;
 
                 case MessagingManager.TRIGGER_SIGNAL:
-                    if (this.m_triggerSignal.has (__userId)) {
-                        var __params:SFS2X.SFSEvent = e.data;
+                    var __params:SFS2X.SFSEvent = e.data;
+                    var __triggerName:string = __params.getUtfString ("__triggerName__");
 
-                        this.m_triggerSignal.get (__userId).fireSignal (__params.getUtfString ("__triggerName__"), __params);
+                    if (this.m_triggerSignal.has (__triggerName + __userId)) {
+                        this.m_triggerSignal.get (__triggerName + __userId).fireSignal (__params);
                     }
 
                     break;
@@ -322,18 +323,18 @@ import { XType } from "../../engine/type/XType";
         }
 	
 	//------------------------------------------------------------------------------------------
-        public addTriggerListener (__userId:number, __listener:any):number {
-            if (!this.m_triggerSignal.has (__userId)) {
-                this.m_triggerSignal.set (__userId, new XSignal ());
+        public addTriggerListener (__userId:number, __triggerName:string, __listener:any):number {
+            if (!this.m_triggerSignal.has (__triggerName + __userId)) {
+                this.m_triggerSignal.set (__triggerName + __userId, new XSignal ());
             }
 
-            return this.m_triggerSignal.get (__userId).addListener (__listener);
+            return this.m_triggerSignal.get (__triggerName + __userId).addListener (__listener);
         }
 
 	//------------------------------------------------------------------------------------------
-        public removeTriggerListener  (__userId:number, __id):void {
-            if (this.m_triggerSignal.has (__userId)) {
-                return this.m_triggerSignal.get (__userId).removeListener (__id);
+        public removeTriggerListener  (__triggerID:string, __id):void {
+            if (this.m_triggerSignal.has (__triggerID)) {
+                return this.m_triggerSignal.get (__triggerID).removeListener (__id);
             }
         }
 
